@@ -57,9 +57,7 @@ public class LastSyncWidget extends AsyncLoadingWidget< SyncTime >
    @Override
    protected void initializeNonLoadables( View view )
    {
-      final Account account = AppContext.get( getContext() )
-                                        .getAccountService()
-                                        .getRtmAccount();
+      final Account account = getAccount();
       setDrawerUsername( view, account );
    }
    
@@ -75,9 +73,10 @@ public class LastSyncWidget extends AsyncLoadingWidget< SyncTime >
    
    
    @Override
-   protected void setSwitchViewData( View switchView, SyncTime data )
+   protected void initializeSwitchView( View switchView, SyncTime data )
    {
       setLastSyncTime( (TextView) switchView, data );
+      switchView.setVisibility( View.VISIBLE );
    }
    
    
@@ -85,15 +84,7 @@ public class LastSyncWidget extends AsyncLoadingWidget< SyncTime >
    private void setDrawerUsername( View view, Account account )
    {
       final TextView userName = (TextView) view.findViewById( R.id.user_name );
-      
-      if ( account != null )
-      {
-         userName.setText( account.name );
-      }
-      else
-      {
-         userName.setText( R.string.home_no_account );
-      }
+      userName.setText( account.name );
    }
    
    
@@ -122,5 +113,15 @@ public class LastSyncWidget extends AsyncLoadingWidget< SyncTime >
       
       lastSyncTimeView.setText( getContext().getString( R.string.home_last_sync,
                                                         lastSyncTimeString ) );
+   }
+   
+   
+   
+   private Account getAccount()
+   {
+      final Account account = AppContext.get( getContext() )
+                                        .getAccountService()
+                                        .getRtmAccount();
+      return account;
    }
 }

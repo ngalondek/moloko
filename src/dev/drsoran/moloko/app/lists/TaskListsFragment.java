@@ -156,8 +156,7 @@ public class TaskListsFragment extends MolokoExpandableListFragment< TasksList >
       if ( hasWritableAccess() && !list.isLocked() )
       {
          getActivity().getMenuInflater()
-                              .inflate( R.menu.tasklists_group_context_rwd,
-                                        menu );
+                      .inflate( R.menu.tasklists_group_context_rwd, menu );
          
          menu.findItem( R.id.ctx_menu_delete_list )
              .setTitle( getString( R.string.phr_delete_with_name, listName ) );
@@ -169,7 +168,7 @@ public class TaskListsFragment extends MolokoExpandableListFragment< TasksList >
       else
       {
          getActivity().getMenuInflater()
-                              .inflate( R.menu.tasklists_group_context, menu );
+                      .inflate( R.menu.tasklists_group_context, menu );
       }
       
       if ( getExpandableListView().isGroupExpanded( ExpandableListView.getPackedPositionGroup( info.packedPosition ) ) )

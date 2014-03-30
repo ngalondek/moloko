@@ -41,7 +41,7 @@ abstract class AsyncLoadingTasksCountWidget extends
    
    
    @Override
-   protected void setSwitchViewData( View switchView, Integer data )
+   protected void initializeSwitchView( View switchView, Integer data )
    {
       setTasksCount( (TextView) switchView, data );
    }

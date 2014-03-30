@@ -22,7 +22,6 @@
 
 package dev.drsoran.moloko.app.home;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import android.content.Context;
@@ -31,49 +30,16 @@ import android.database.DataSetObserver;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import dev.drsoran.moloko.R;
-import dev.drsoran.moloko.app.Intents;
-import dev.drsoran.moloko.app.contactslist.ContactsListActivity;
-import dev.drsoran.moloko.app.tagcloud.TagCloudActivity;
 
 
-class HomeAdapter extends BaseAdapter
+abstract class AbstractHomeNavAdapter extends BaseAdapter
 {
-   private final List< IMolokoHomeWidget > widgets = new ArrayList< IMolokoHomeWidget >();
+   private List< INavWidget > widgets;
    
    
    
-   public HomeAdapter( Context context )
+   protected AbstractHomeNavAdapter( Context context )
    {
-      widgets.add( new LastSyncWidget( context ) );
-      
-      widgets.add( new CalendarWidget( context,
-                                       CalendarWidget.TODAY,
-                                       R.string.home_label_today ) );
-      
-      widgets.add( new CalendarWidget( context,
-                                       CalendarWidget.TOMORROW,
-                                       R.string.home_label_tomorrow ) );
-      
-      widgets.add( new OverdueWidget( context ) );
-      
-      widgets.add( new WidgetWithIcon( context,
-                                       R.drawable.ic_home_tag,
-                                       R.string.app_tagcloud,
-                                       new Intent( context,
-                                                   TagCloudActivity.class ) ) );
-      
-      widgets.add( new WidgetWithIcon( context,
-                                       R.drawable.ic_home_user,
-                                       R.string.app_contacts,
-                                       new Intent( context,
-                                                   ContactsListActivity.class ) ) );
-      
-      widgets.add( new WidgetWithIcon( context,
-                                       R.drawable.ic_home_settings,
-                                       R.string.app_preferences,
-                                       Intents.createOpenPreferencesIntent( context ) ) );
-      
       registerDataSetObserver( new DataSetObserver()
       {
          @Override
@@ -82,6 +48,13 @@ class HomeAdapter extends BaseAdapter
             updateWidgets();
          }
       } );
+   }
+   
+   
+   
+   public final void setWidgets( List< INavWidget > widgets )
+   {
+      this.widgets = widgets;
    }
    
    
@@ -102,9 +75,9 @@ class HomeAdapter extends BaseAdapter
    
    
    
-   public IMolokoHomeWidget getWidget( int position )
+   public INavWidget getWidget( int position )
    {
-      return (IMolokoHomeWidget) getItem( position );
+      return (INavWidget) getItem( position );
    }
    
    
@@ -113,6 +86,30 @@ class HomeAdapter extends BaseAdapter
    public long getItemId( int position )
    {
       return 0;
+   }
+   
+   
+   
+   @Override
+   public boolean areAllItemsEnabled()
+   {
+      for ( INavWidget widget : widgets )
+      {
+         if ( widget.getIntent() == null )
+         {
+            return false;
+         }
+      }
+      
+      return true;
+   }
+   
+   
+   
+   @Override
+   public boolean isEnabled( int position )
+   {
+      return getWidget( position ).getIntent() != null;
    }
    
    
@@ -134,7 +131,7 @@ class HomeAdapter extends BaseAdapter
    
    public void updateWidgets()
    {
-      for ( IMolokoHomeWidget widget : widgets )
+      for ( INavWidget widget : widgets )
       {
          widget.setDirty();
       }
@@ -142,7 +139,7 @@ class HomeAdapter extends BaseAdapter
    
    
    
-   public void addWidget( IMolokoHomeWidget widget )
+   public void addWidget( INavWidget widget )
    {
       widgets.add( widget );
       notifyDataSetChanged();
@@ -150,7 +147,7 @@ class HomeAdapter extends BaseAdapter
    
    
    
-   public void removeWidget( IMolokoHomeWidget widget )
+   public void removeWidget( INavWidget widget )
    {
       widget.stop();
       widgets.remove( widget );
@@ -162,7 +159,7 @@ class HomeAdapter extends BaseAdapter
    
    public void stopWidgets()
    {
-      for ( IMolokoHomeWidget widget : widgets )
+      for ( INavWidget widget : widgets )
       {
          widget.stop();
       }

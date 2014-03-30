@@ -89,7 +89,7 @@ public class HomeActivity extends MolokoActivity implements
                                     GravityCompat.START );
       
       drawerList = (ListView) drawerLayout.findViewById( R.id.left_drawer );
-      drawerList.setAdapter( new HomeAdapter( getActionBar().getThemedContext() ) );
+      
       drawerList.setOnItemClickListener( this );
       
       drawerToggle = new ActionBarDrawerToggle( this,
@@ -149,7 +149,9 @@ public class HomeActivity extends MolokoActivity implements
    protected void onStart()
    {
       super.onStart();
+      
       registerListeners();
+      setHomeAdapter();
    }
    
    
@@ -191,9 +193,9 @@ public class HomeActivity extends MolokoActivity implements
    
    
    
-   private HomeAdapter getAdapter()
+   private AbstractHomeNavAdapter getAdapter()
    {
-      return (HomeAdapter) drawerList.getAdapter();
+      return (AbstractHomeNavAdapter) drawerList.getAdapter();
    }
    
    
@@ -213,6 +215,21 @@ public class HomeActivity extends MolokoActivity implements
       super.onActivityCreateOptionsMenu( menu );
       
       return true;
+   }
+   
+   
+   
+   @Override
+   public boolean onPrepareOptionsMenu( Menu menu )
+   {
+      final MenuItem addAccountItem = menu.findItem( R.id.menu_add_account );
+      
+      if ( addAccountItem != null )
+      {
+         addAccountItem.setVisible( !drawerLayout.isDrawerOpen( drawerList ) );
+      }
+      
+      return super.onPrepareOptionsMenu( menu );
    }
    
    
@@ -287,7 +304,7 @@ public class HomeActivity extends MolokoActivity implements
    {
       super.onAccountUpdated( what, account );
       
-      updateWidgets();
+      setHomeAdapter();
       invalidateOptionsMenu();
    }
    
@@ -299,15 +316,18 @@ public class HomeActivity extends MolokoActivity implements
                             int pos,
                             long id )
    {
-      final HomeAdapter adapter = getAdapter();
+      final AbstractHomeNavAdapter adapter = getAdapter();
       
       final Intent intent = adapter.getIntentForWidget( pos );
       if ( intent != null )
       {
          startActivityWithHomeAction( intent, HomeAction.HOME );
+         drawerLayout.closeDrawer( drawerList );
       }
-      
-      drawerLayout.closeDrawer( drawerList );
+      else
+      {
+         drawerList.setItemChecked( pos, false );
+      }
    }
    
    
@@ -343,7 +363,7 @@ public class HomeActivity extends MolokoActivity implements
    
    private void updateWidgets()
    {
-      final HomeAdapter adapter = getAdapter();
+      final AbstractHomeNavAdapter adapter = getAdapter();
       if ( adapter != null )
       {
          adapter.updateWidgets();
@@ -357,5 +377,34 @@ public class HomeActivity extends MolokoActivity implements
       final Account account = getAppContext().getAccountService()
                                              .getRtmAccount();
       return account;
+   }
+   
+   
+   
+   private void setHomeAdapter()
+   {
+      if ( getAccount() != null )
+      {
+         drawerList.setAdapter( createAdapter() );
+      }
+      else
+      {
+         drawerList.setAdapter( createNoAccountAdapter() );
+      }
+   }
+   
+   
+   
+   private AbstractHomeNavAdapter createNoAccountAdapter()
+   {
+      return new NoAccountHomeNavAdapter( getActionBar().getThemedContext() );
+   }
+   
+   
+   
+   private AbstractHomeNavAdapter createAdapter()
+   {
+      return new DefaultHomeNavAdapter( getActionBar().getThemedContext(),
+                                        getLoaderManager() );
    }
 }

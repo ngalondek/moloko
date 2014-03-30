@@ -83,7 +83,7 @@ class LinkedContactsLoader extends AbstractLoader< List< LinkedContact > >
    
    
    @Override
-   protected List< LinkedContact > queryResultInBackground( IContentRepository contentRepository ) throws ContentException
+   public List< LinkedContact > queryResultInBackground( IContentRepository contentRepository ) throws ContentException
    {
       final List< Contact > contacts = contactsLoader.loadInBackground();
       contactsLoader.throwContentExceptionOnError();

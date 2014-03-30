@@ -55,7 +55,7 @@ public class ContactsLoader extends AbstractLoader< List< Contact > >
    
    
    @Override
-   protected List< Contact > queryResultInBackground( IContentRepository contentRepository )
+   public List< Contact > queryResultInBackground( IContentRepository contentRepository )
    {
       final List< Contact > contacts = new ArrayList< Contact >();
       for ( Contact contact : contentRepository.getAllContacts() )

@@ -30,19 +30,23 @@ import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.SystemContext;
 
 
-abstract class AsyncLoadingWidget< T > implements IMolokoHomeWidget
+abstract class AsyncLoadingWidget< T > implements INavWidget
 {
    private final Context context;
-   
-   private View view;
-   
-   private AsyncTask< Void, Void, T > query;
-   
-   private boolean needsReload = true;
    
    private final int layoutResId;
    
    private final int switchResId;
+   
+   private View loadingView;
+   
+   private View switchView;
+   
+   private AsyncTask< Void, Void, T > query;
+   
+   private T loadingData;
+   
+   private boolean needsReload = true;
    
    
    
@@ -87,21 +91,23 @@ abstract class AsyncLoadingWidget< T > implements IMolokoHomeWidget
    @Override
    public final View getView( View convertView )
    {
-      if ( convertView == null )
-      {
-         convertView = LayoutInflater.from( context ).inflate( layoutResId,
-                                                               null );
-      }
-      view = convertView;
+      convertView = LayoutInflater.from( context ).inflate( layoutResId, null );
+      
+      loadingView = convertView.findViewById( R.id.loading_spinner );
+      switchView = convertView.findViewById( switchResId );
+      
+      initializeNonLoadables( convertView );
       
       if ( needsReload )
       {
          asyncReload();
       }
+      else
+      {
+         initializeLoadables();
+      }
       
-      initializeNonLoadables( view );
-      
-      return view;
+      return convertView;
    }
    
    
@@ -110,18 +116,14 @@ abstract class AsyncLoadingWidget< T > implements IMolokoHomeWidget
    {
       stop();
       
-      final View loadingView = view.findViewById( R.id.loading_spinner );
-      loadingView.setVisibility( View.VISIBLE );
-      
-      final View switchView;
-      if ( switchResId != -1 )
+      if ( loadingView != null )
       {
-         switchView = view.findViewById( switchResId );
-         switchView.setVisibility( View.INVISIBLE );
+         loadingView.setVisibility( View.VISIBLE );
       }
-      else
+      
+      if ( switchView != null )
       {
-         switchView = null;
+         switchView.setVisibility( View.INVISIBLE );
       }
       
       query = new AsyncTask< Void, Void, T >()
@@ -137,19 +139,31 @@ abstract class AsyncLoadingWidget< T > implements IMolokoHomeWidget
          @Override
          protected void onPostExecute( T result )
          {
-            loadingView.setVisibility( View.GONE );
-            
-            query = null;
-            needsReload = false;
-            
-            if ( switchView != null )
-            {
-               setSwitchViewData( switchView, result );
-            }
+            loadingData = result;
+            initializeLoadables();
          }
+         
       };
       
       SystemContext.get( context ).getExecutorService().execute( query );
+   }
+   
+   
+   
+   private void initializeLoadables()
+   {
+      if ( loadingView != null )
+      {
+         loadingView.setVisibility( View.GONE );
+      }
+      
+      query = null;
+      needsReload = false;
+      
+      if ( switchView != null )
+      {
+         initializeSwitchView( switchView, loadingData );
+      }
    }
    
    
@@ -162,5 +176,5 @@ abstract class AsyncLoadingWidget< T > implements IMolokoHomeWidget
    
    
    
-   protected abstract void setSwitchViewData( View switchView, T data );
+   protected abstract void initializeSwitchView( View switchView, T data );
 }

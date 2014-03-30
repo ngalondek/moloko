@@ -54,7 +54,7 @@ public class TagsLoader extends AbstractLoader< List< String > >
    
    
    @Override
-   protected List< String > queryResultInBackground( IContentRepository contentRepository )
+   public List< String > queryResultInBackground( IContentRepository contentRepository )
    {
       final List< String > tags = new ArrayList< String >();
       

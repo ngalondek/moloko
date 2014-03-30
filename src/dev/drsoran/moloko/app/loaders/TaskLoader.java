@@ -63,7 +63,7 @@ public class TaskLoader extends AbstractLoader< Task >
    
    
    @Override
-   protected Task queryResultInBackground( IContentRepository contentRepository ) throws ContentException
+   public Task queryResultInBackground( IContentRepository contentRepository ) throws ContentException
    {
       return contentRepository.getTask( taskId, taskContentOptions );
    }

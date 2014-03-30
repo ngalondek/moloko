@@ -17,19 +17,9 @@
    xmlns:android="http://schemas.android.com/apk/res/android">
 
    <ImageView
-      android:id="@+id/widget_simple_image"
+      android:id="@android:id/icon"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
       android:layout_gravity="center" />
-
-   <TextView
-      android:id="@+id/text"
-      style="@style/Home_Widget_Text"
-      android:layout_width="fill_parent"
-      android:layout_height="wrap_content"
-      android:layout_marginTop="2dip"
-      android:singleLine="false"
-      android:ellipsize="marquee"
-      android:gravity="center" />
-
+   
 </merge>

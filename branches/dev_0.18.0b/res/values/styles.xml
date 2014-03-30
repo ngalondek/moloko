@@ -294,15 +294,20 @@
     </style>
 
     <style name="Home_Widget_Calendar_Date">
-        <item name="android:textSize">21sp</item>
+        <item name="android:textSize">10sp</item>
         <item name="android:textStyle">bold</item>
-        <item name="android:textColor">@color/app_icon_black_fill</item>
+        <item name="android:textColor">@color/app_menu_icon_fill</item>
     </style>
     
     <style name="Home_DrawerStyle" parent="@android:style/Widget.DeviceDefault.ListView">
        <item name="android:choiceMode">singleChoice</item>
        <item name="android:background">@android:color/background_dark</item>
-    </style>        
+    </style>
+    
+     <style name="Home_DrawerItemStyle">
+       <item name="android:minHeight">?android:attr/listPreferredItemHeightSmall</item>
+       <item name="android:background">?android:attr/activatedBackgroundIndicator</item>
+    </style>
 
     <!-- ********* -->
     <!-- Task -->

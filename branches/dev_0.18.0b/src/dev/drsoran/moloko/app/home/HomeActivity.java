@@ -23,44 +23,33 @@
 package dev.drsoran.moloko.app.home;
 
 import android.accounts.Account;
-import android.app.LoaderManager.LoaderCallbacks;
 import android.content.Intent;
-import android.content.Loader;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
-import android.text.format.DateUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.GridView;
 import android.widget.ListView;
-import android.widget.TextView;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.app.Intents;
 import dev.drsoran.moloko.app.Intents.HomeAction;
 import dev.drsoran.moloko.app.baseactivities.MolokoActivity;
-import dev.drsoran.moloko.app.loaders.SyncTimeLoader;
-import dev.drsoran.moloko.content.Constants;
 import dev.drsoran.moloko.event.IOnTimeChangedListener;
-import dev.drsoran.rtm.sync.SyncTime;
 
 
 public class HomeActivity extends MolokoActivity implements
-         IOnTimeChangedListener, OnItemClickListener,
-         LoaderCallbacks< SyncTime >
+         IOnTimeChangedListener, OnItemClickListener
 {
    private ActionBarDrawerToggle drawerToggle;
    
    private DrawerLayout drawerLayout;
    
    private ListView drawerList;
-   
-   private long lastSyncMillis = Constants.NO_TIME;
    
    
    
@@ -71,8 +60,6 @@ public class HomeActivity extends MolokoActivity implements
       
       setContentView( R.layout.home_activity );
       initializeDrawer();
-      
-      getLoaderManager().initLoader( R.id.loader_sync_time, Bundle.EMPTY, this );
    }
    
    
@@ -101,8 +88,9 @@ public class HomeActivity extends MolokoActivity implements
       drawerLayout.setDrawerShadow( R.drawable.drawer_shadow,
                                     GravityCompat.START );
       
-      drawerList = (ListView) drawerLayout.findViewById( android.R.id.list );
-      drawerList.setAdapter( new HomeAdapter( this ) );
+      drawerList = (ListView) drawerLayout.findViewById( R.id.left_drawer );
+      drawerList.setAdapter( new HomeAdapter( getActionBar().getThemedContext() ) );
+      drawerList.setOnItemClickListener( this );
       
       drawerToggle = new ActionBarDrawerToggle( this,
                                                 drawerLayout,
@@ -198,9 +186,7 @@ public class HomeActivity extends MolokoActivity implements
       super.onResume();
       
       final Account account = getAccount();
-      
       setAccountNameAsSubTitle( account );
-      setDrawerUsernameAndLastSync( account );
    }
    
    
@@ -253,45 +239,10 @@ public class HomeActivity extends MolokoActivity implements
    
    
    @Override
-   public Loader< SyncTime > onCreateLoader( int id, Bundle args )
-   {
-      return new SyncTimeLoader( getAppContext().asDomainContext() );
-   }
-   
-   
-   
-   @Override
-   public void onLoadFinished( Loader< SyncTime > loader, SyncTime data )
-   {
-      if ( data != null )
-      {
-         lastSyncMillis = Math.max( data.getLastSyncInMillis(),
-                                    data.getLastSyncOutMillis() );
-      }
-      else
-      {
-         lastSyncMillis = Constants.NO_TIME;
-      }
-      
-      setLastSyncTime();
-   }
-   
-   
-   
-   @Override
-   public void onLoaderReset( Loader< SyncTime > loader )
-   {
-      lastSyncMillis = Constants.NO_TIME;
-      setLastSyncTime();
-   }
-   
-   
-   
-   @Override
    public void onSyncStatusChanged( int status )
    {
       super.onSyncStatusChanged( status );
-      setLastSyncTime();
+      updateWidgets();
    }
    
    
@@ -319,22 +270,14 @@ public class HomeActivity extends MolokoActivity implements
    
    private void onMidnight()
    {
-      final HomeAdapter adapter = getAdapter();
-      if ( adapter != null )
-      {
-         adapter.updateWidgets();
-      }
+      updateWidgets();
    }
    
    
    
    private void onSystemTimeChanged()
    {
-      final HomeAdapter adapter = getAdapter();
-      if ( adapter != null )
-      {
-         adapter.updateWidgets();
-      }
+      updateWidgets();
    }
    
    
@@ -344,7 +287,7 @@ public class HomeActivity extends MolokoActivity implements
    {
       super.onAccountUpdated( what, account );
       
-      setDrawerUsernameAndLastSync( account );
+      updateWidgets();
       invalidateOptionsMenu();
    }
    
@@ -356,13 +299,15 @@ public class HomeActivity extends MolokoActivity implements
                             int pos,
                             long id )
    {
-      final HomeAdapter adapter = (HomeAdapter) ( (GridView) adapterView ).getAdapter();
+      final HomeAdapter adapter = getAdapter();
       
       final Intent intent = adapter.getIntentForWidget( pos );
       if ( intent != null )
       {
          startActivityWithHomeAction( intent, HomeAction.HOME );
       }
+      
+      drawerLayout.closeDrawer( drawerList );
    }
    
    
@@ -388,54 +333,21 @@ public class HomeActivity extends MolokoActivity implements
    
    
    
-   private void setDrawerUsernameAndLastSync( Account account )
-   {
-      final TextView userName = (TextView) drawerLayout.findViewById( R.id.user_name );
-      
-      if ( account != null )
-      {
-         userName.setText( account.name );
-         setLastSyncTime();
-      }
-      else
-      {
-         userName.setText( R.string.home_no_account );
-         drawerLayout.findViewById( R.id.last_sync_time )
-                     .setVisibility( View.GONE );
-      }
-   }
-   
-   
-   
-   private void setLastSyncTime()
-   {
-      final TextView lastSyncTimeView = (TextView) drawerLayout.findViewById( R.id.last_sync_time );
-      final String lastSyncTimeString;
-      if ( lastSyncMillis != Constants.NO_TIME )
-      {
-         final long now = getAppContext().getCalendarProvider()
-                                         .getNowMillisUtc();
-         
-         lastSyncTimeString = DateUtils.getRelativeTimeSpanString( lastSyncMillis,
-                                                                   now,
-                                                                   DateUtils.MINUTE_IN_MILLIS )
-                                       .toString();
-      }
-      else
-      {
-         lastSyncTimeString = getString( R.string.phr_unknown );
-      }
-      
-      lastSyncTimeView.setText( getString( R.string.home_last_sync,
-                                           lastSyncTimeString ) );
-   }
-   
-   
-   
    @Override
    protected int[] getFragmentIds()
    {
       return null;
+   }
+   
+   
+   
+   private void updateWidgets()
+   {
+      final HomeAdapter adapter = getAdapter();
+      if ( adapter != null )
+      {
+         adapter.updateWidgets();
+      }
    }
    
    

@@ -30,49 +30,13 @@
          The drawer is given a fixed width in dp and extends the full height of
          the container.
     -->
-
-    <LinearLayout
-        android:id="@+id/left_drawer"
-        android:layout_width="@dimen/app_home_drawer_width"
-        android:layout_height="match_parent"
-        android:layout_gravity="start"
-        android:orientation="vertical" >
-        
-        <RelativeLayout
-            android:id="@+id/user_section"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/app_holo_gray" >
-
-            <TextView
-                android:id="@+id/user_name"
-                style="@style/Home_UserName_TextStyle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="12dip"
-                android:singleLine="true"
-                android:ellipsize="end"
-                android:text="@string/design_text" />
-
-            <TextView
-                android:id="@+id/last_sync_time"
-                style="@style/Home_LastSync_TextStyle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/user_name"
-                android:layout_alignLeft="@id/user_name"
-                android:drawableLeft="@drawable/ic_small_black_refresh"
-                android:singleLine="true"
-                android:text="@string/design_text" />
-            
-        </RelativeLayout>
-
-        <ListView
-            android:id="@android:id/list"
-            style="@style/Home_DrawerStyle"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
-        
-    </LinearLayout>
+    
+     <ListView
+         android:id="@+id/left_drawer"
+         style="@style/Home_DrawerStyle"
+         android:layout_width="@dimen/app_home_drawer_width"
+         android:layout_height="match_parent"
+         android:layout_gravity="start"
+         android:choiceMode="singleChoice" />
 
 </android.support.v4.widget.DrawerLayout>

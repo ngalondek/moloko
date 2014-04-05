@@ -43,6 +43,7 @@ import dev.drsoran.moloko.domain.model.Recurrence;
 import dev.drsoran.moloko.domain.model.TasksList;
 import dev.drsoran.moloko.domain.parsing.IRecurrenceParsing;
 import dev.drsoran.moloko.domain.services.IContentRepository;
+import dev.drsoran.moloko.domain.services.TasksListContentOptions;
 import dev.drsoran.moloko.ui.services.IDateFormatterService;
 import dev.drsoran.moloko.util.MolokoDateUtils;
 import dev.drsoran.rtm.RtmCalendar;
@@ -162,7 +163,7 @@ public class RtmSmartAddSuggestor
    {
       final Collection< RtmSmartAddSuggestion > suggestions = new ArrayList< RtmSmartAddSuggestion >();
       
-      for ( TasksList tasksList : contentRepository.getPhysicalTasksLists() )
+      for ( TasksList tasksList : contentRepository.getPhysicalTasksLists( TasksListContentOptions.None ) )
       {
          suggestions.add( new RtmSmartAddSuggestion( tasksList.getName(),
                                                      Long.valueOf( tasksList.getId() ) ) );

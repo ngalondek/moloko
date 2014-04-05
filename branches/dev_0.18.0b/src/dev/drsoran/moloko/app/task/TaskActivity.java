@@ -271,7 +271,7 @@ public class TaskActivity extends MolokoEditActivity implements
    @Override
    public void onOpenContact( String fullname, String username )
    {
-      final Intent intent = Intents.createOpenContactIntent( this,
+      final Intent intent = Intents.createShowTasksOfContactIntent( this,
                                                              fullname,
                                                              username );
       startActivity( intent );
@@ -380,15 +380,5 @@ public class TaskActivity extends MolokoEditActivity implements
       config.putLong( Intents.Extras.KEY_TASK_ID, taskId );
       
       return config;
-   }
-   
-   
-   
-   @Override
-   protected int[] getFragmentIds()
-   {
-      return new int[]
-      { taskFragment != null ? taskFragment.getId() : -1,
-       notesListFragment != null ? notesListFragment.getId() : -1 };
    }
 }

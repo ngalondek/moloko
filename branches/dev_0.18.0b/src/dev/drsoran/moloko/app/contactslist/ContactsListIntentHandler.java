@@ -22,32 +22,31 @@
 
 package dev.drsoran.moloko.app.contactslist;
 
-import android.os.Bundle;
-import android.view.Menu;
+import android.content.Intent;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.app.Intents;
 import dev.drsoran.moloko.app.baseactivities.MolokoActivity;
+import dev.drsoran.moloko.app.home.IntentHandlerBase;
 
 
-public class ContactsListActivity extends MolokoActivity implements
+public class ContactsListIntentHandler extends IntentHandlerBase implements
          IContactsListFragmentListener
 {
-   @Override
-   public void onCreate( Bundle savedInstanceState )
+   public ContactsListIntentHandler( MolokoActivity activity, int fragmentId )
    {
-      super.onCreate( savedInstanceState );
-      setContentView( R.layout.contactslist_activity );
+      super( activity, fragmentId );
    }
    
    
    
    @Override
-   public boolean onActivityCreateOptionsMenu( Menu menu )
+   public void handleIntent( Intent intent )
    {
-      getMenuInflater().inflate( R.menu.sync_only, menu );
-      super.onActivityCreateOptionsMenu( menu );
+      final ContactsListFragment fragment = ContactsListFragment.newInstance( intent.getExtras() );
+      fragment.setListener( this );
       
-      return true;
+      getActivity().showFragment( getFragmentId(), fragment );
+      getActivity().setTitle( R.string.app_contacts );
    }
    
    
@@ -55,7 +54,7 @@ public class ContactsListActivity extends MolokoActivity implements
    @Override
    public void onShowPhoneBookEntryOfContact( String lookUpKey )
    {
-      startActivity( Intents.createShowPhonebookContactIntent( lookUpKey ) );
+      getActivity().startActivity( Intents.createShowPhonebookContactIntent( lookUpKey ) );
    }
    
    
@@ -63,18 +62,8 @@ public class ContactsListActivity extends MolokoActivity implements
    @Override
    public void onShowTasksOfContact( String fullname, String username )
    {
-      startActivityWithHomeAction( Intents.createOpenContactIntent( this,
-                                                                    fullname,
-                                                                    username ),
-                                   getClass() );
-   }
-   
-   
-   
-   @Override
-   protected int[] getFragmentIds()
-   {
-      return new int[]
-      { R.id.frag_contactslist };
+      getActivity().startActivity( Intents.createShowTasksOfContactIntent( getActivity(),
+                                                                           fullname,
+                                                                           username ) );
    }
 }

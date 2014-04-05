@@ -32,8 +32,8 @@ import dev.drsoran.moloko.ui.fragments.listeners.IAlertDialogFragmentListener;
 /**
  * Implementation taken from android.accounts.AccountAuthenticatorActivity
  */
-abstract class AccountAuthenticatorActivity extends MolokoActivity
-         implements IAlertDialogFragmentListener
+abstract class AccountAuthenticatorActivity extends MolokoActivity implements
+         IAlertDialogFragmentListener
 {
    private AccountAuthenticatorResponse mAccountAuthenticatorResponse = null;
    
@@ -81,13 +81,5 @@ abstract class AccountAuthenticatorActivity extends MolokoActivity
          mAccountAuthenticatorResponse = null;
       }
       super.finish();
-   }
-   
-   
-   
-   @Override
-   protected int[] getFragmentIds()
-   {
-      return null;
    }
 }

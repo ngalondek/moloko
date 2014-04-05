@@ -95,7 +95,7 @@
 
     <style name="ListViewStyle" parent="@android:style/Widget.DeviceDefault.Light.ListView" />
 
-    <style name="ExpandableListViewStyle" parent="@android:style/Widget.DeviceDefault.Light.ExpandableListView" />
+    <style name="ExpandableListViewStyle" parent="@android:style/Widget.DeviceDefault.ExpandableListView" />
 
     <!-- GridViewStyle -->
 
@@ -311,10 +311,10 @@
        <item name="android:divider">@android:drawable/divider_horizontal_dark</item>
     </style>
     
-     <style name="Home_DrawerItemStyle" >
+    <style name="Home_DrawerItemStyle" >
        <item name="android:minHeight">?android:attr/listPreferredItemHeightSmall</item>
        <item name="android:background">?android:attr/activatedBackgroundIndicator</item>       
-    </style>
+    </style>    
 
     <!-- ********* -->
     <!-- Task -->

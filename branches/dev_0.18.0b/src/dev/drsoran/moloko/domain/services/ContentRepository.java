@@ -273,8 +273,7 @@ public class ContentRepository implements IContentRepository
    
    @Override
    public Iterable< Task > getTasksInTasksList( TasksList tasksList,
-                                                TaskContentOptions taskContentOptions ) throws ContentException,
-                                                                                       GrammarException
+                                                TaskContentOptions taskContentOptions ) throws ContentException
    {
       if ( tasksList == null )
       {
@@ -322,8 +321,7 @@ public class ContentRepository implements IContentRepository
    
    
    @Override
-   public ExtendedTaskCount getTaskCountOfTasksList( TasksList tasksList ) throws ContentException,
-                                                                          GrammarException
+   public ExtendedTaskCount getTaskCountOfTasksList( TasksList tasksList ) throws ContentException
    {
       if ( tasksList == null )
       {
@@ -342,8 +340,7 @@ public class ContentRepository implements IContentRepository
    
    
    
-   private ExtendedTaskCount getTasksCountFromSmartFilter( RtmSmartFilter smartFilter ) throws ContentException,
-                                                                                       GrammarException
+   private ExtendedTaskCount getTasksCountFromSmartFilter( RtmSmartFilter smartFilter ) throws ContentException
    {
       final String selection = getSelectionTasksCountFromSmartFilter( smartFilter );
       return getExtendedTaskCountOrDefault( selection );
@@ -370,16 +367,22 @@ public class ContentRepository implements IContentRepository
    
    
    
-   private String getSelectionTasksCountFromSmartFilter( RtmSmartFilter smartFilter ) throws ContentException,
-                                                                                     GrammarException
+   private String getSelectionTasksCountFromSmartFilter( RtmSmartFilter smartFilter ) throws ContentException
    {
-      final Pair< StringBuilder, RtmSmartFilterParsingReturn > selectionBuilderWithResult = getSelectionFromSmartFilterBuilder( smartFilter );
-      final StringBuilder selectionBuilder = selectionBuilderWithResult.first;
-      
-      // The predefined, static selections are added first to maintain speed gain from table indices.
-      selectionBuilder.insert( 0, " AND " ).insert( 0, SEL_NO_DELETED_TASKS );
-      
-      return selectionBuilder.toString();
+      try
+      {
+         Pair< StringBuilder, RtmSmartFilterParsingReturn > selectionBuilderWithResult = getSelectionFromSmartFilterBuilder( smartFilter );
+         final StringBuilder selectionBuilder = selectionBuilderWithResult.first;
+         
+         // The predefined, static selections are added first to maintain speed gain from table indices.
+         selectionBuilder.insert( 0, " AND " ).insert( 0, SEL_NO_DELETED_TASKS );
+         
+         return selectionBuilder.toString();
+      }
+      catch ( GrammarException e )
+      {
+         throw new ContentException( e );
+      }
    }
    
    
@@ -406,16 +409,23 @@ public class ContentRepository implements IContentRepository
    
    @Override
    public Iterable< Task > getTasksFromSmartFilter( RtmSmartFilter smartFilter,
-                                                    TaskContentOptions taskContentOptions ) throws ContentException,
-                                                                                           GrammarException
+                                                    TaskContentOptions taskContentOptions ) throws ContentException
    {
       if ( smartFilter == null )
       {
          throw new IllegalArgumentException( "smartFilter" );
       }
       
-      final String selection = getSelectionForTasksFromSmartFilter( smartFilter );
-      return getAllTasksImpl( selection, taskContentOptions );
+      String selection;
+      try
+      {
+         selection = getSelectionForTasksFromSmartFilter( smartFilter );
+         return getAllTasksImpl( selection, taskContentOptions );
+      }
+      catch ( GrammarException e )
+      {
+         throw new ContentException( e );
+      }
    }
    
    
@@ -466,31 +476,72 @@ public class ContentRepository implements IContentRepository
    
    
    @Override
-   public TasksList getTasksList( long tasksListId ) throws NoSuchElementException,
-                                                    ContentException
+   public TasksList getTasksList( long tasksListId,
+                                  TasksListContentOptions tasksListContentOptions ) throws NoSuchElementException,
+                                                                                   ContentException
    {
-      return tasksListsQueryHandler.getElement( ContentUris.TASKS_LISTS_CONTENT_URI_ID,
-                                                tasksListId );
+      final TasksList tasksList = tasksListsQueryHandler.getElement( ContentUris.TASKS_LISTS_CONTENT_URI_ID,
+                                                                     tasksListId );
+      
+      if ( tasksListContentOptions.hasFlag( TasksListContentOptions.WithTaskCount ) )
+      {
+         final ExtendedTaskCount taskCount = getTaskCountOfTasksList( tasksList );
+         tasksList.setTasksCount( taskCount );
+      }
+      
+      return tasksList;
    }
    
    
    
    @Override
-   public Iterable< TasksList > getAllTasksLists() throws ContentException
+   public Iterable< TasksList > getAllTasksLists( TasksListContentOptions tasksListContentOptions ) throws ContentException
    {
-      return tasksListsQueryHandler.getAll( ContentUris.TASKS_LISTS_CONTENT_URI,
-                                            SEL_NO_DELETED_NO_ARCHIVED_TASKS_LISTS,
-                                            TasksListColumns.DEFAULT_SORT_ORDER );
+      final Iterable< TasksList > lists = getTasksListsWithSelection( SEL_NO_DELETED_NO_ARCHIVED_TASKS_LISTS );
+      
+      if ( tasksListContentOptions.equals( TasksListContentOptions.WithTaskCount ) )
+      {
+         return addTaskCountToTasksLists( lists );
+      }
+      
+      return lists;
    }
    
    
    
    @Override
-   public Iterable< TasksList > getPhysicalTasksLists() throws ContentException
+   public Iterable< TasksList > getPhysicalTasksLists( TasksListContentOptions tasksListContentOptions ) throws ContentException
+   {
+      final Iterable< TasksList > lists = getTasksListsWithSelection( SEL_PHYSICAL_NO_DELETED_NO_ARCHIVED_TASKS_LISTS );
+      
+      if ( tasksListContentOptions.equals( TasksListContentOptions.WithTaskCount ) )
+      {
+         return addTaskCountToTasksLists( lists );
+      }
+      
+      return lists;
+   }
+   
+   
+   
+   public Iterable< TasksList > getTasksListsWithSelection( String selecton ) throws ContentException
    {
       return tasksListsQueryHandler.getAll( ContentUris.TASKS_LISTS_CONTENT_URI,
-                                            SEL_PHYSICAL_NO_DELETED_NO_ARCHIVED_TASKS_LISTS,
+                                            selecton,
                                             TasksListColumns.DEFAULT_SORT_ORDER );
+   }
+   
+   
+   
+   private Iterable< TasksList > addTaskCountToTasksLists( Iterable< TasksList > lists )
+   {
+      for ( TasksList tasksList : lists )
+      {
+         final ExtendedTaskCount taskCount = getTaskCountOfTasksList( tasksList );
+         tasksList.setTasksCount( taskCount );
+      }
+      
+      return lists;
    }
    
    

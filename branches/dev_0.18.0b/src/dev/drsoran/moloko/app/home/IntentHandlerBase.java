@@ -1,5 +1,5 @@
 /* 
- *	Copyright (c) 2012 Ronny Röhricht
+ *	Copyright (c) 2014 Ronny Röhricht
  *
  *	This file is part of Moloko.
  *
@@ -22,27 +22,34 @@
 
 package dev.drsoran.moloko.app.home;
 
-import android.content.Intent;
-import android.view.View;
+import dev.drsoran.moloko.app.baseactivities.MolokoActivity;
 
 
-public interface INavWidget
+public abstract class IntentHandlerBase implements IIntentHandler
 {
-   public void setDirty();
+   private final MolokoActivity activity;
+   
+   private final int fragmentId;
    
    
    
-   public void start();
+   protected IntentHandlerBase( MolokoActivity activity, int fragmentId )
+   {
+      this.activity = activity;
+      this.fragmentId = fragmentId;
+   }
    
    
    
-   public void stop();
+   public MolokoActivity getActivity()
+   {
+      return activity;
+   }
    
    
    
-   public Intent getIntent();
-   
-   
-   
-   public View getView( View convertView );
+   public int getFragmentId()
+   {
+      return fragmentId;
+   }
 }

@@ -35,6 +35,7 @@ import dev.drsoran.moloko.app.baseactivities.MolokoActivity;
 import dev.drsoran.moloko.app.home.HomeActivity;
 import dev.drsoran.moloko.app.services.ISettingsService;
 import dev.drsoran.moloko.app.settings.SettingConstants;
+import dev.drsoran.moloko.domain.services.TasksListContentOptions;
 import dev.drsoran.moloko.ui.fragments.dialogs.AlertDialogFragment;
 
 
@@ -281,20 +282,13 @@ public class StartUpActivity extends MolokoActivity
    {
       try
       {
-         getAppContext().getContentRepository().getTasksList( id );
+         getAppContext().getContentRepository()
+                        .getTasksList( id, TasksListContentOptions.None );
          return true;
       }
       catch ( NoSuchElementException e )
       {
          return false;
       }
-   }
-   
-   
-   
-   @Override
-   protected int[] getFragmentIds()
-   {
-      return new int[] {};
    }
 }

@@ -34,8 +34,6 @@ public class NoAccountHomeNavAdapter extends AbstractHomeNavAdapter
 {
    public NoAccountHomeNavAdapter( Context context )
    {
-      super( context );
-      
       final List< INavWidget > widgets = new ArrayList< INavWidget >();
       widgets.add( new WidgetWithIcon( context,
                                        R.drawable.ic_menu_add,

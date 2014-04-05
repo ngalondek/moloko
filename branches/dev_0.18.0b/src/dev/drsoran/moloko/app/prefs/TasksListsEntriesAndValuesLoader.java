@@ -31,6 +31,7 @@ import dev.drsoran.moloko.app.settings.SettingConstants;
 import dev.drsoran.moloko.domain.model.TasksList;
 import dev.drsoran.moloko.domain.services.ContentException;
 import dev.drsoran.moloko.domain.services.IContentRepository;
+import dev.drsoran.moloko.domain.services.TasksListContentOptions;
 
 
 class TasksListsEntriesAndValuesLoader
@@ -63,11 +64,11 @@ class TasksListsEntriesAndValuesLoader
       final Iterable< TasksList > tasksLists;
       if ( includeSmartLists )
       {
-         tasksLists = contentRepository.getAllTasksLists();
+         tasksLists = contentRepository.getAllTasksLists( TasksListContentOptions.None );
       }
       else
       {
-         tasksLists = contentRepository.getPhysicalTasksLists();
+         tasksLists = contentRepository.getPhysicalTasksLists( TasksListContentOptions.None );
       }
       
       final boolean includeNoneElement = ( flags & FLAG_INCLUDE_NONE ) != 0;

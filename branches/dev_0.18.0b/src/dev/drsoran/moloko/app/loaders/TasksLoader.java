@@ -31,11 +31,9 @@ import dev.drsoran.moloko.content.ContentUris;
 import dev.drsoran.moloko.domain.DomainContext;
 import dev.drsoran.moloko.domain.model.RtmSmartFilter;
 import dev.drsoran.moloko.domain.model.Task;
-import dev.drsoran.moloko.domain.services.ContentException;
 import dev.drsoran.moloko.domain.services.IContentRepository;
 import dev.drsoran.moloko.domain.services.TaskContentOptions;
 import dev.drsoran.rtm.Iterables;
-import dev.drsoran.rtm.parsing.GrammarException;
 
 
 public class TasksLoader extends AbstractLoader< List< Task > >
@@ -97,24 +95,17 @@ public class TasksLoader extends AbstractLoader< List< Task > >
    {
       final Iterable< Task > tasks;
       
-      try
+      if ( tasksListId != Constants.NO_ID )
       {
-         if ( tasksListId != Constants.NO_ID )
-         {
-            tasks = contentRepository.getTasksInPhysicalTasksList( tasksListId,
-                                                                   taskContentOptions );
-         }
-         else
-         {
-            tasks = contentRepository.getTasksFromSmartFilter( smartFilter,
-                                                               taskContentOptions );
-         }
-         
-         return Iterables.asList( tasks );
+         tasks = contentRepository.getTasksInPhysicalTasksList( tasksListId,
+                                                                taskContentOptions );
       }
-      catch ( GrammarException e )
+      else
       {
-         throw new ContentException( e );
+         tasks = contentRepository.getTasksFromSmartFilter( smartFilter,
+                                                            taskContentOptions );
       }
+      
+      return Iterables.asList( tasks );
    }
 }

@@ -155,15 +155,6 @@ public class NoteEditActivity extends MolokoEditActivity implements
    
    
    
-   @Override
-   protected int[] getFragmentIds()
-   {
-      return new int[]
-      { R.id.frag_note };
-   }
-   
-   
-   
    private void addFragment( Class< ? extends Fragment > clazz )
    {
       if ( findAddedFragmentById( R.id.frag_note ) == null )

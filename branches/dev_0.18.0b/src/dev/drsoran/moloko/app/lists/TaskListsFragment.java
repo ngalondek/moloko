@@ -39,10 +39,11 @@ import android.widget.ExpandableListView.ExpandableListContextMenuInfo;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.app.AppContext;
 import dev.drsoran.moloko.app.event.IOnSettingsChangedListener;
-import dev.drsoran.moloko.app.lists.TaskListsAdapter.IOnGroupIndicatorClickedListener;
+import dev.drsoran.moloko.app.lists.TasksListsAdapter.IOnGroupIndicatorClickedListener;
 import dev.drsoran.moloko.app.loaders.TasksListsLoader;
 import dev.drsoran.moloko.app.settings.SettingConstants;
 import dev.drsoran.moloko.domain.model.TasksList;
+import dev.drsoran.moloko.domain.services.TasksListContentOptions;
 import dev.drsoran.moloko.ui.fragments.MolokoExpandableListFragment;
 
 
@@ -303,10 +304,10 @@ public class TaskListsFragment extends MolokoExpandableListFragment< TasksList >
    @Override
    public ExpandableListAdapter createExpandableListAdapterForResult( List< TasksList > result )
    {
-      final TaskListsAdapter taskListsAdapter = new TaskListsAdapter( appContext,
-                                                                      R.layout.tasklists_fragment_group,
-                                                                      R.layout.tasklists_fragment_child,
-                                                                      result );
+      final TasksListsAdapter taskListsAdapter = new TasksListsAdapter( appContext,
+                                                                        R.layout.tasklists_fragment_group,
+                                                                        R.layout.tasklists_fragment_child,
+                                                                        result );
       taskListsAdapter.setOnGroupIndicatorClickedListener( this );
       
       return taskListsAdapter;
@@ -318,7 +319,7 @@ public class TaskListsFragment extends MolokoExpandableListFragment< TasksList >
    public Loader< List< TasksList >> newLoaderInstance( int id, Bundle config )
    {
       final TasksListsLoader loader = new TasksListsLoader( appContext.asDomainContext(),
-                                                            true );
+                                                            TasksListContentOptions.Complete );
       loader.setRespectContentChanges( true );
       
       return loader;
@@ -343,9 +344,9 @@ public class TaskListsFragment extends MolokoExpandableListFragment< TasksList >
    
    
    @Override
-   public TaskListsAdapter getExpandableListAdapter()
+   public TasksListsAdapter getExpandableListAdapter()
    {
-      return (TaskListsAdapter) super.getExpandableListAdapter();
+      return (TasksListsAdapter) super.getExpandableListAdapter();
    }
    
    

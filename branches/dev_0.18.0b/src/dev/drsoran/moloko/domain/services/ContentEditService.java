@@ -134,7 +134,8 @@ public class ContentEditService implements IContentEditService
    public void updateTasksList( long tasksListId, TasksList updatedTasksList ) throws NoSuchElementException,
                                                                               ContentException
    {
-      final TasksList exitsingTasksList = contentRepository.getTasksList( tasksListId );
+      final TasksList exitsingTasksList = contentRepository.getTasksList( tasksListId,
+                                                                          TasksListContentOptions.None );
       
       tasksListsContentEditHandler.updateElement( ContentUris.TASKS_LISTS_CONTENT_URI_ID,
                                                   exitsingTasksList,

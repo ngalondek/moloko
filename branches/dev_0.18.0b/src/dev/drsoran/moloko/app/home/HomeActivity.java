@@ -22,6 +22,8 @@
 
 package dev.drsoran.moloko.app.home;
 
+import java.text.MessageFormat;
+
 import android.accounts.Account;
 import android.content.Intent;
 import android.content.res.Configuration;
@@ -32,24 +34,29 @@ import android.support.v4.widget.DrawerLayout;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
-import android.widget.ListView;
+import android.widget.ExpandableListView;
+import android.widget.ExpandableListView.OnGroupClickListener;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.app.Intents;
 import dev.drsoran.moloko.app.Intents.HomeAction;
 import dev.drsoran.moloko.app.baseactivities.MolokoActivity;
+import dev.drsoran.moloko.app.contactslist.ContactsListIntentHandler;
+import dev.drsoran.moloko.app.tagcloud.TagCloudIntentHandler;
+import dev.drsoran.moloko.content.ContentUris;
+import dev.drsoran.moloko.content.UriLookup;
 import dev.drsoran.moloko.event.IOnTimeChangedListener;
 
 
 public class HomeActivity extends MolokoActivity implements
-         IOnTimeChangedListener, OnItemClickListener
+         IOnTimeChangedListener, OnGroupClickListener
 {
    private ActionBarDrawerToggle drawerToggle;
    
    private DrawerLayout drawerLayout;
    
-   private ListView drawerList;
+   private ExpandableListView drawerList;
+   
+   private final UriLookup< IIntentHandler > intentHandlers = new UriLookup< IIntentHandler >( ContentUris.MATCHER );
    
    
    
@@ -59,6 +66,7 @@ public class HomeActivity extends MolokoActivity implements
       super.onCreate( savedInstanceState );
       
       setContentView( R.layout.home_activity );
+      setupIntentHandler();
       initializeDrawer();
    }
    
@@ -82,15 +90,37 @@ public class HomeActivity extends MolokoActivity implements
    
    
    
+   @Override
+   protected void onNewIntent( Intent intent )
+   {
+      super.onNewIntent( intent );
+      
+      if ( intent.getData() != null )
+      {
+         final IIntentHandler intentHandler = intentHandlers.get( intent.getData() );
+         if ( intentHandler != null )
+         {
+            intentHandler.handleIntent( intent );
+         }
+         else
+         {
+            Log().e( getClass(),
+                     MessageFormat.format( "Unhandled Intent {0}", intent ) );
+         }
+      }
+   }
+   
+   
+   
    private void initializeDrawer()
    {
       drawerLayout = (DrawerLayout) findViewById( R.id.drawer_layout );
       drawerLayout.setDrawerShadow( R.drawable.drawer_shadow,
                                     GravityCompat.START );
       
-      drawerList = (ListView) drawerLayout.findViewById( R.id.left_drawer );
+      drawerList = (ExpandableListView) drawerLayout.findViewById( R.id.left_drawer );
       
-      drawerList.setOnItemClickListener( this );
+      drawerList.setOnGroupClickListener( this );
       
       drawerToggle = new ActionBarDrawerToggle( this,
                                                 drawerLayout,
@@ -195,7 +225,7 @@ public class HomeActivity extends MolokoActivity implements
    
    private AbstractHomeNavAdapter getAdapter()
    {
-      return (AbstractHomeNavAdapter) drawerList.getAdapter();
+      return (AbstractHomeNavAdapter) drawerList.getExpandableListAdapter();
    }
    
    
@@ -311,23 +341,22 @@ public class HomeActivity extends MolokoActivity implements
    
    
    @Override
-   public void onItemClick( AdapterView< ? > adapterView,
-                            View view,
-                            int pos,
-                            long id )
+   public boolean onGroupClick( ExpandableListView parent,
+                                View v,
+                                int groupPosition,
+                                long id )
    {
       final AbstractHomeNavAdapter adapter = getAdapter();
       
-      final Intent intent = adapter.getIntentForWidget( pos );
+      final Intent intent = adapter.getIntentForWidget( groupPosition );
       if ( intent != null )
       {
          startActivityWithHomeAction( intent, HomeAction.HOME );
          drawerLayout.closeDrawer( drawerList );
+         drawerList.setItemChecked( groupPosition, true );
       }
-      else
-      {
-         drawerList.setItemChecked( pos, false );
-      }
+      
+      return true;
    }
    
    
@@ -349,14 +378,6 @@ public class HomeActivity extends MolokoActivity implements
       {
          getActionBar().setSubtitle( null );
       }
-   }
-   
-   
-   
-   @Override
-   protected int[] getFragmentIds()
-   {
-      return null;
    }
    
    
@@ -404,7 +425,18 @@ public class HomeActivity extends MolokoActivity implements
    
    private AbstractHomeNavAdapter createAdapter()
    {
-      return new DefaultHomeNavAdapter( getActionBar().getThemedContext(),
-                                        getLoaderManager() );
+      return new DefaultHomeNavAdapter( getActionBar().getThemedContext() );
+   }
+   
+   
+   
+   private void setupIntentHandler()
+   {
+      intentHandlers.put( new TagCloudIntentHandler( this,
+                                                     android.R.id.widget_frame ),
+                          ContentUris.MATCH_TAGS );
+      intentHandlers.put( new ContactsListIntentHandler( this,
+                                                         android.R.id.widget_frame ),
+                          ContentUris.MATCH_CONTACTS );
    }
 }

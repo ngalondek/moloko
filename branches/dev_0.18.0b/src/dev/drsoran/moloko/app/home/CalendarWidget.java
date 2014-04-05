@@ -40,7 +40,6 @@ import dev.drsoran.moloko.ui.UiContext;
 import dev.drsoran.moloko.ui.services.IDateFormatterService;
 import dev.drsoran.rtm.Iterables;
 import dev.drsoran.rtm.RtmCalendar;
-import dev.drsoran.rtm.parsing.GrammarException;
 import dev.drsoran.rtm.parsing.grammar.rtmsmart.RtmSmartFilterBuilder;
 
 
@@ -116,18 +115,11 @@ public class CalendarWidget extends AsyncLoadingTasksCountWidget
    @Override
    protected Integer doBackgroundQuery()
    {
-      try
-      {
-         final Iterable< Task > tasks = DomainContext.get( getContext() )
-                                                     .getContentRepository()
-                                                     .getTasksFromSmartFilter( new RtmSmartFilter( getFilterExpression( getCalendar() ) ),
-                                                                               TaskContentOptions.None );
-         return Iterables.size( tasks );
-      }
-      catch ( GrammarException e )
-      {
-         return null;
-      }
+      final Iterable< Task > tasks = DomainContext.get( getContext() )
+                                                  .getContentRepository()
+                                                  .getTasksFromSmartFilter( new RtmSmartFilter( getFilterExpression( getCalendar() ) ),
+                                                                            TaskContentOptions.None );
+      return Iterables.size( tasks );
    }
    
    

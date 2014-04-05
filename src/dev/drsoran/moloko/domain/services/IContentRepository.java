@@ -34,7 +34,6 @@ import dev.drsoran.moloko.domain.model.RtmSmartFilter;
 import dev.drsoran.moloko.domain.model.Settings;
 import dev.drsoran.moloko.domain.model.Task;
 import dev.drsoran.moloko.domain.model.TasksList;
-import dev.drsoran.rtm.parsing.GrammarException;
 import dev.drsoran.rtm.sync.SyncTime;
 
 
@@ -50,8 +49,7 @@ public interface IContentRepository
    
    
    Iterable< Task > getTasksInTasksList( TasksList tasksList,
-                                         TaskContentOptions taskContentOptions ) throws ContentException,
-                                                                                GrammarException;
+                                         TaskContentOptions taskContentOptions ) throws ContentException;
    
    
    
@@ -60,27 +58,26 @@ public interface IContentRepository
    
    
    
-   ExtendedTaskCount getTaskCountOfTasksList( TasksList tasksList ) throws ContentException,
-                                                                   GrammarException;
+   ExtendedTaskCount getTaskCountOfTasksList( TasksList tasksList ) throws ContentException;
    
    
    
    Iterable< Task > getTasksFromSmartFilter( RtmSmartFilter smartFilter,
-                                             TaskContentOptions taskContentOptions ) throws ContentException,
-                                                                                    GrammarException;
+                                             TaskContentOptions taskContentOptions ) throws ContentException;
    
    
    
-   TasksList getTasksList( long tasksListId ) throws NoSuchElementException,
-                                             ContentException;
+   TasksList getTasksList( long tasksListId,
+                           TasksListContentOptions tasksListContentOptions ) throws NoSuchElementException,
+                                                                            ContentException;
    
    
    
-   Iterable< TasksList > getAllTasksLists() throws ContentException;
+   Iterable< TasksList > getAllTasksLists( TasksListContentOptions tasksListContentOptions ) throws ContentException;
    
    
    
-   Iterable< TasksList > getPhysicalTasksLists() throws ContentException;
+   Iterable< TasksList > getPhysicalTasksLists( TasksListContentOptions tasksListContentOptions ) throws ContentException;
    
    
    

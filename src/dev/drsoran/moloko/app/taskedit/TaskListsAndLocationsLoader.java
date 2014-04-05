@@ -32,6 +32,7 @@ import dev.drsoran.moloko.domain.model.Location;
 import dev.drsoran.moloko.domain.model.TasksList;
 import dev.drsoran.moloko.domain.services.ContentException;
 import dev.drsoran.moloko.domain.services.IContentRepository;
+import dev.drsoran.moloko.domain.services.TasksListContentOptions;
 import dev.drsoran.rtm.Iterables;
 
 
@@ -59,7 +60,7 @@ class TaskListsAndLocationsLoader extends AbstractLoader< TaskEditData >
    @Override
    public TaskEditData queryResultInBackground( IContentRepository respository ) throws ContentException
    {
-      final List< TasksList > lists = Iterables.asList( respository.getPhysicalTasksLists() );
+      final List< TasksList > lists = Iterables.asList( respository.getPhysicalTasksLists( TasksListContentOptions.None ) );
       final List< Location > locations = Iterables.asList( respository.getAllLocations() );
       
       return new TaskEditData( lists, locations );

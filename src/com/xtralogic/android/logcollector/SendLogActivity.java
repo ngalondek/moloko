@@ -271,8 +271,8 @@ public class SendLogActivity extends MolokoActivity
       }
       
       mCollectLogTask = (CollectLogTask) getAppContext().getExecutorService()
-                                                           .execute( new CollectLogTask(),
-                                                                     list );
+                                                        .execute( new CollectLogTask(),
+                                                                  list );
    }
    
    
@@ -515,13 +515,5 @@ public class SendLogActivity extends MolokoActivity
       }
       
       return version;
-   }
-   
-   
-   
-   @Override
-   protected int[] getFragmentIds()
-   {
-      return new int[] {};
    }
 }

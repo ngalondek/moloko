@@ -66,6 +66,13 @@ public class ContactsListFragment extends MolokoListFragment< LinkedContact >
    
    
    
+   public void setListener( IContactsListFragmentListener listener )
+   {
+      this.listener = listener;
+   }
+   
+   
+   
    @Override
    public void onAttach( Activity activity )
    {

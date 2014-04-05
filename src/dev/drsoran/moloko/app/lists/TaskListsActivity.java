@@ -270,13 +270,4 @@ public class TaskListsActivity extends MolokoEditActivity implements
                                                                 .setNegativeButton( R.string.btn_cancel )
                                                                 .show( this );
    }
-   
-   
-   
-   @Override
-   protected int[] getFragmentIds()
-   {
-      return new int[]
-      { R.id.frag_tasklists };
-   }
 }

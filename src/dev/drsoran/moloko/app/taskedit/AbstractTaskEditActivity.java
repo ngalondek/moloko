@@ -102,15 +102,6 @@ abstract class AbstractTaskEditActivity extends MolokoEditActivity
    
    
    
-   @Override
-   protected int[] getFragmentIds()
-   {
-      return new int[]
-      { R.id.frag_task_edit };
-   }
-   
-   
-   
    private void saveChangesAndFinish()
    {
       if ( finishFragmentEditing( getTaskEditFragment() ) )

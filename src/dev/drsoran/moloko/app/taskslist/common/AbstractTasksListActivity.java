@@ -55,6 +55,7 @@ import dev.drsoran.moloko.domain.model.ExtendedTaskCount;
 import dev.drsoran.moloko.domain.model.RtmSmartFilter;
 import dev.drsoran.moloko.domain.model.Task;
 import dev.drsoran.moloko.domain.model.TasksList;
+import dev.drsoran.moloko.domain.services.TasksListContentOptions;
 import dev.drsoran.moloko.state.InstanceState;
 import dev.drsoran.rtm.parsing.grammar.rtmsmart.RtmSmartFilterBuilder;
 
@@ -574,9 +575,7 @@ abstract class AbstractTasksListActivity extends MolokoEditActivity implements
    
    private void startLoadingRtmLists()
    {
-      getLoaderManager().initLoader( TasksListsLoader.ID,
-                                            Bundle.EMPTY,
-                                            this );
+      getLoaderManager().initLoader( TasksListsLoader.ID, Bundle.EMPTY, this );
    }
    
    
@@ -585,7 +584,7 @@ abstract class AbstractTasksListActivity extends MolokoEditActivity implements
    public Loader< List< TasksList >> onCreateLoader( int id, Bundle args )
    {
       final TasksListsLoader loader = new TasksListsLoader( getAppContext().asDomainContext(),
-                                                            true );
+                                                            TasksListContentOptions.WithTaskCount );
       loader.setRespectContentChanges( false );
       
       return loader;
@@ -624,7 +623,7 @@ abstract class AbstractTasksListActivity extends MolokoEditActivity implements
    {
       createActionBarNavigationAdapter();
       getActionBar().setListNavigationCallbacks( actionBarNavigationAdapter,
-                                                        this );
+                                                 this );
    }
    
    
@@ -753,15 +752,6 @@ abstract class AbstractTasksListActivity extends MolokoEditActivity implements
       }
       
       return null;
-   }
-   
-   
-   
-   @Override
-   protected int[] getFragmentIds()
-   {
-      return new int[]
-      { R.id.frag_taskslist };
    }
    
    

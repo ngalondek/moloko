@@ -46,7 +46,7 @@ import dev.drsoran.moloko.domain.model.TasksList;
 import dev.drsoran.rtm.parsing.grammar.rtmsmart.RtmSmartFilterBuilder;
 
 
-class TaskListsAdapter extends BaseExpandableListAdapter
+public class TasksListsAdapter extends BaseExpandableListAdapter
 {
    public interface IOnGroupIndicatorClickedListener
    {
@@ -97,7 +97,7 @@ class TaskListsAdapter extends BaseExpandableListAdapter
    
    
    
-   public TaskListsAdapter( AppContext context, int groupId, int childId,
+   public TasksListsAdapter( AppContext context, int groupId, int childId,
       List< TasksList > lists )
    {
       this.context = context;

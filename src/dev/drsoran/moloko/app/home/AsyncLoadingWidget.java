@@ -76,6 +76,14 @@ abstract class AsyncLoadingWidget< T > implements INavWidget
    
    
    @Override
+   public void start()
+   {
+      needsReload = true;
+   }
+   
+   
+   
+   @Override
    public void stop()
    {
       if ( query != null )
@@ -98,13 +106,13 @@ abstract class AsyncLoadingWidget< T > implements INavWidget
       
       initializeNonLoadables( convertView );
       
-      if ( needsReload )
+      if ( !needsReload )
       {
-         asyncReload();
+         initializeLoadables();
       }
       else
       {
-         initializeLoadables();
+         asyncReload();
       }
       
       return convertView;
@@ -152,18 +160,15 @@ abstract class AsyncLoadingWidget< T > implements INavWidget
    
    private void initializeLoadables()
    {
+      query = null;
+      needsReload = false;
+      
       if ( loadingView != null )
       {
          loadingView.setVisibility( View.GONE );
       }
       
-      query = null;
-      needsReload = false;
-      
-      if ( switchView != null )
-      {
-         initializeSwitchView( switchView, loadingData );
-      }
+      onLoadingFinished( switchView, loadingData );
    }
    
    
@@ -176,5 +181,5 @@ abstract class AsyncLoadingWidget< T > implements INavWidget
    
    
    
-   protected abstract void initializeSwitchView( View switchView, T data );
+   protected abstract void onLoadingFinished( View switchView, T data );
 }

@@ -25,21 +25,15 @@ package dev.drsoran.moloko.app.home;
 import java.util.ArrayList;
 import java.util.List;
 
-import android.app.LoaderManager;
 import android.content.Context;
-import android.content.Intent;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.app.Intents;
-import dev.drsoran.moloko.app.contactslist.ContactsListActivity;
-import dev.drsoran.moloko.app.tagcloud.TagCloudActivity;
 
 
 public class DefaultHomeNavAdapter extends AbstractHomeNavAdapter
 {
-   public DefaultHomeNavAdapter( Context context, LoaderManager loaderManager )
+   public DefaultHomeNavAdapter( Context context )
    {
-      super( context );
-      
       final List< INavWidget > widgets = new ArrayList< INavWidget >();
       widgets.add( new LastSyncWidget( context ) );
       
@@ -53,9 +47,7 @@ public class DefaultHomeNavAdapter extends AbstractHomeNavAdapter
       
       widgets.add( new OverdueWidget( context ) );
       
-      widgets.add( new SectionWidget( context, R.string.app_tasklists ) );
-      
-      widgets.add( new ListsWidget( context, loaderManager ) );
+      widgets.add( new TasksListsSectionWidget( context, this ) );
       
       widgets.add( new SectionWidget( context,
                                       R.string.home_label_miscellaneous ) );
@@ -63,14 +55,12 @@ public class DefaultHomeNavAdapter extends AbstractHomeNavAdapter
       widgets.add( new WidgetWithIcon( context,
                                        R.drawable.ic_home_tag,
                                        R.string.app_tagcloud,
-                                       new Intent( context,
-                                                   TagCloudActivity.class ) ) );
+                                       Intents.createOpenTagsIntent() ) );
       
       widgets.add( new WidgetWithIcon( context,
                                        R.drawable.ic_home_user,
                                        R.string.app_contacts,
-                                       new Intent( context,
-                                                   ContactsListActivity.class ) ) );
+                                       Intents.createOpenContactsIntent() ) );
       
       widgets.add( new WidgetWithIcon( context,
                                        R.drawable.ic_home_settings,

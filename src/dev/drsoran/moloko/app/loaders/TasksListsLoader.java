@@ -22,7 +22,6 @@
 
 package dev.drsoran.moloko.app.loaders;
 
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,29 +29,25 @@ import android.net.Uri;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.content.ContentUris;
 import dev.drsoran.moloko.domain.DomainContext;
-import dev.drsoran.moloko.domain.model.ExtendedTaskCount;
 import dev.drsoran.moloko.domain.model.TasksList;
 import dev.drsoran.moloko.domain.services.ContentException;
 import dev.drsoran.moloko.domain.services.IContentRepository;
-import dev.drsoran.rtm.parsing.GrammarException;
+import dev.drsoran.moloko.domain.services.TasksListContentOptions;
 
 
 public class TasksListsLoader extends AbstractLoader< List< TasksList > >
 {
    public final static int ID = R.id.tasks_lists_loader;
    
-   private final boolean includeTasksCount;
-   
-   private final DomainContext context;
+   private final TasksListContentOptions options;
    
    
    
-   public TasksListsLoader( DomainContext context, boolean includeTasksCount )
+   public TasksListsLoader( DomainContext context,
+      TasksListContentOptions options )
    {
       super( context );
-      
-      this.context = context;
-      this.includeTasksCount = includeTasksCount;
+      this.options = options;
    }
    
    
@@ -70,26 +65,8 @@ public class TasksListsLoader extends AbstractLoader< List< TasksList > >
    {
       final ArrayList< TasksList > list = new ArrayList< TasksList >();
       
-      for ( TasksList tasksList : contentRepository.getAllTasksLists() )
+      for ( TasksList tasksList : contentRepository.getAllTasksLists( options ) )
       {
-         if ( includeTasksCount )
-         {
-            try
-            {
-               final ExtendedTaskCount taskCount = contentRepository.getTaskCountOfTasksList( tasksList );
-               tasksList.setTasksCount( taskCount );
-            }
-            catch ( GrammarException e )
-            {
-               context.Log()
-                      .e( getClass(),
-                          MessageFormat.format( "Unable to get tasks count for tasks list {0} with filter {1}",
-                                                tasksList,
-                                                tasksList.getSmartFilter() ),
-                          e );
-            }
-         }
-         
          list.add( tasksList );
       }
       

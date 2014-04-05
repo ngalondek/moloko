@@ -73,7 +73,7 @@ public class LastSyncWidget extends AsyncLoadingWidget< SyncTime >
    
    
    @Override
-   protected void initializeSwitchView( View switchView, SyncTime data )
+   protected void onLoadingFinished( View switchView, SyncTime data )
    {
       setLastSyncTime( (TextView) switchView, data );
       switchView.setVisibility( View.VISIBLE );

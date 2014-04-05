@@ -609,6 +609,25 @@ public abstract class MolokoActivity extends Activity implements IConfigurable,
    
    
    
+   public void showFragment( int id, Fragment fragment )
+   {
+      final FragmentTransaction transaction = getFragmentManager().beginTransaction();
+      
+      if ( findAddedFragmentById( id ) != null )
+      {
+         transaction.replace( id, fragment );
+      }
+      else
+      {
+         transaction.add( id, fragment );
+      }
+      
+      transaction.setTransition( FragmentTransaction.TRANSIT_FRAGMENT_FADE );
+      transaction.commit();
+   }
+   
+   
+   
    protected boolean removeFragmentByTag( String fragmentTag, int transit )
    {
       boolean removed = false;
@@ -783,8 +802,4 @@ public abstract class MolokoActivity extends Activity implements IConfigurable,
    {
       startActivity( Intents.createOpenPreferencesIntent( this ) );
    }
-   
-   
-   
-   protected abstract int[] getFragmentIds();
 }

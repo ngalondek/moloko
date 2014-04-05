@@ -1,5 +1,5 @@
 /* 
- *	Copyright (c) 2012 Ronny Röhricht
+ *	Copyright (c) 2013 Ronny Röhricht
  *
  *	This file is part of Moloko.
  *
@@ -20,29 +20,41 @@
  * Ronny Röhricht - implementation
  */
 
-package dev.drsoran.moloko.app.home;
+package dev.drsoran.moloko.domain.services;
 
-import android.content.Intent;
-import android.view.View;
-
-
-public interface INavWidget
+public enum TasksListContentOptions
 {
-   public void setDirty();
+   None( 0 ), WithTaskCount( 1 << 0 ), Minimal( None.getValue() ), Complete(
+      WithTaskCount.getValue() );
+   
+   private int value;
    
    
    
-   public void start();
+   TasksListContentOptions( int value )
+   {
+      this.value = value;
+   }
    
    
    
-   public void stop();
+   public int getValue()
+   {
+      return value;
+   }
    
    
    
-   public Intent getIntent();
+   public boolean hasFlag( TasksListContentOptions flag )
+   {
+      return ( value & flag.value ) == flag.value;
+   }
    
    
    
-   public View getView( View convertView );
+   public TasksListContentOptions or( TasksListContentOptions flag )
+   {
+      value |= flag.value;
+      return this;
+   }
 }

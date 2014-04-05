@@ -273,9 +273,9 @@ public final class Intents
       
       
       
-      public final static Bundle createOpenContactExtras( Context context,
-                                                          String fullname,
-                                                          String username )
+      public final static Bundle createShowTasksOfContactExtras( Context context,
+                                                                 String fullname,
+                                                                 String username )
       {
          // Here we take the username cause the fullname can be ambiguous.
          return createSmartFilterExtras( context,
@@ -290,16 +290,16 @@ public final class Intents
       public final static Bundle createOpenTagExtras( Context context,
                                                       String tag )
       {
-         return createOpenTagsExtras( context,
-                                      Collections.singletonList( tag ),
-                                      null );
+         return createOpenTasksWithTagsExtras( context,
+                                               Collections.singletonList( tag ),
+                                               null );
       }
       
       
       
-      public final static Bundle createOpenTagsExtras( Context context,
-                                                       List< String > tags,
-                                                       String logicalOperator )
+      public final static Bundle createOpenTasksWithTagsExtras( Context context,
+                                                                List< String > tags,
+                                                                String logicalOperator )
       {
          final int tagsSize = tags.size();
          
@@ -557,19 +557,26 @@ public final class Intents
    
    
    
-   public final static Intent createOpenTagsIntent( Context context,
-                                                    List< String > tags,
-                                                    String logicalOperator )
+   public final static Intent createOpenTagsIntent()
    {
-      return new Intent( Intent.ACTION_VIEW, ContentUris.TASKS_CONTENT_URI ).putExtras( Extras.createOpenTagsExtras( context,
-                                                                                                                     tags,
-                                                                                                                     logicalOperator ) );
+      return new Intent( Intent.ACTION_VIEW, ContentUris.TAGS_CONTENT_URI );
    }
    
    
    
-   public final static Intent createOpenLocationIntentByName( Context context,
-                                                              String locationName )
+   public final static Intent createOpenTasksWithTagsIntent( Context context,
+                                                             List< String > tags,
+                                                             String logicalOperator )
+   {
+      return new Intent( Intent.ACTION_VIEW, ContentUris.TASKS_CONTENT_URI ).putExtras( Extras.createOpenTasksWithTagsExtras( context,
+                                                                                                                              tags,
+                                                                                                                              logicalOperator ) );
+   }
+   
+   
+   
+   public final static Intent createShowTasksWithLocationNameIntent( Context context,
+                                                                     String locationName )
    {
       return new Intent( Intent.ACTION_VIEW, ContentUris.TASKS_CONTENT_URI ).putExtras( Extras.createOpenLocationExtras( context,
                                                                                                                          locationName ) );
@@ -636,13 +643,20 @@ public final class Intents
    
    
    
-   public final static Intent createOpenContactIntent( Context context,
-                                                       String fullname,
-                                                       String username )
+   public final static Intent createOpenContactsIntent()
    {
-      return new Intent( Intent.ACTION_VIEW, ContentUris.TASKS_CONTENT_URI ).putExtras( Extras.createOpenContactExtras( context,
-                                                                                                                        fullname,
-                                                                                                                        username ) );
+      return new Intent( Intent.ACTION_VIEW, ContentUris.CONTACTS_CONTENT_URI );
+   }
+   
+   
+   
+   public final static Intent createShowTasksOfContactIntent( Context context,
+                                                              String fullname,
+                                                              String username )
+   {
+      return new Intent( Intent.ACTION_VIEW, ContentUris.TASKS_CONTENT_URI ).putExtras( Extras.createShowTasksOfContactExtras( context,
+                                                                                                                               fullname,
+                                                                                                                               username ) );
    }
    
    

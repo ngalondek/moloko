@@ -22,45 +22,31 @@
 
 package dev.drsoran.moloko.app.home;
 
+import java.util.Collection;
 import java.util.List;
 
-import android.content.Context;
 import android.content.Intent;
-import android.database.DataSetObserver;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
+import android.widget.BaseExpandableListAdapter;
 
 
-abstract class AbstractHomeNavAdapter extends BaseAdapter
+abstract class AbstractHomeNavAdapter extends BaseExpandableListAdapter
 {
    private List< INavWidget > widgets;
-   
-   
-   
-   protected AbstractHomeNavAdapter( Context context )
-   {
-      registerDataSetObserver( new DataSetObserver()
-      {
-         @Override
-         public void onChanged()
-         {
-            updateWidgets();
-         }
-      } );
-   }
    
    
    
    public final void setWidgets( List< INavWidget > widgets )
    {
       this.widgets = widgets;
+      startWidgets( widgets );
    }
    
    
    
    @Override
-   public int getCount()
+   public int getGroupCount()
    {
       return widgets.size();
    }
@@ -68,24 +54,80 @@ abstract class AbstractHomeNavAdapter extends BaseAdapter
    
    
    @Override
-   public Object getItem( int position )
+   public int getChildrenCount( int groupPosition )
    {
-      return widgets.get( position );
-   }
-   
-   
-   
-   public INavWidget getWidget( int position )
-   {
-      return (INavWidget) getItem( position );
+      return 0;
    }
    
    
    
    @Override
-   public long getItemId( int position )
+   public Object getGroup( int groupPosition )
    {
-      return 0;
+      return widgets.get( groupPosition );
+   }
+   
+   
+   
+   @Override
+   public Object getChild( int groupPosition, int childPosition )
+   {
+      return null;
+   }
+   
+   
+   
+   @Override
+   public long getGroupId( int groupPosition )
+   {
+      return groupPosition;
+   }
+   
+   
+   
+   @Override
+   public long getChildId( int groupPosition, int childPosition )
+   {
+      return childPosition + 1;
+   }
+   
+   
+   
+   @Override
+   public boolean hasStableIds()
+   {
+      return false;
+   }
+   
+   
+   
+   @Override
+   public View getGroupView( int groupPosition,
+                             boolean isExpanded,
+                             View convertView,
+                             ViewGroup parent )
+   {
+      return getWidget( groupPosition ).getView( convertView );
+   }
+   
+   
+   
+   @Override
+   public View getChildView( int groupPosition,
+                             int childPosition,
+                             boolean isLastChild,
+                             View convertView,
+                             ViewGroup parent )
+   {
+      return null;
+   }
+   
+   
+   
+   @Override
+   public boolean isChildSelectable( int groupPosition, int childPosition )
+   {
+      return false;
    }
    
    
@@ -106,18 +148,25 @@ abstract class AbstractHomeNavAdapter extends BaseAdapter
    
    
    
-   @Override
-   public boolean isEnabled( int position )
+   public INavWidget getWidget( int position )
    {
-      return getWidget( position ).getIntent() != null;
+      return (INavWidget) getGroup( position );
    }
    
    
    
-   @Override
-   public View getView( int position, View convertView, ViewGroup parent )
+   public int getPositon( INavWidget widget )
    {
-      return getWidget( position ).getView( convertView );
+      for ( int i = 0; i < widgets.size(); i++ )
+      {
+         final INavWidget w = widgets.get( i );
+         if ( w == widget )
+         {
+            return i;
+         }
+      }
+      
+      return -1;
    }
    
    
@@ -139,20 +188,43 @@ abstract class AbstractHomeNavAdapter extends BaseAdapter
    
    
    
-   public void addWidget( INavWidget widget )
+   public void insertWidgetsAfter( int position,
+                                   Collection< INavWidget > widgets )
    {
-      widgets.add( widget );
+      this.widgets.addAll( position + 1, widgets );
+      startWidgets( widgets );
+      
       notifyDataSetChanged();
    }
    
    
    
-   public void removeWidget( INavWidget widget )
+   public void replaceWidgets( int fromPosition,
+                               int toPosition,
+                               Collection< INavWidget > newWidgets )
    {
-      widget.stop();
-      widgets.remove( widget );
+      int cnt = toPosition - fromPosition;
       
+      while ( cnt-- > 0 )
+      {
+         final INavWidget widget = widgets.get( fromPosition );
+         widget.stop();
+         
+         widgets.remove( fromPosition );
+      }
+      
+      this.widgets.addAll( fromPosition, newWidgets );
       notifyDataSetChanged();
+   }
+   
+   
+   
+   private void startWidgets( Iterable< INavWidget > widgets )
+   {
+      for ( INavWidget widget : widgets )
+      {
+         widget.start();
+      }
    }
    
    

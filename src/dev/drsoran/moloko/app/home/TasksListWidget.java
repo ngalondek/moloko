@@ -28,20 +28,22 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
 import dev.drsoran.moloko.R;
+import dev.drsoran.moloko.app.Intents;
+import dev.drsoran.moloko.domain.model.TasksList;
 
 
-public class SectionWidget implements INavWidget
+public class TasksListWidget implements INavWidget
 {
    private final Context context;
    
-   private final int captionResId;
+   private final TasksList tasksList;
    
    
    
-   public SectionWidget( Context context, int captionResId )
+   public TasksListWidget( Context context, TasksList tasksList )
    {
       this.context = context;
-      this.captionResId = captionResId;
+      this.tasksList = tasksList;
    }
    
    
@@ -70,7 +72,7 @@ public class SectionWidget implements INavWidget
    @Override
    public Intent getIntent()
    {
-      return null;
+      return Intents.createOpenListIntent( context, tasksList, null );
    }
    
    
@@ -79,10 +81,23 @@ public class SectionWidget implements INavWidget
    public View getView( View convertView )
    {
       convertView = LayoutInflater.from( context )
-                                  .inflate( R.layout.home_activity_drawer_section_widget,
+                                  .inflate( R.layout.home_activity_drawer_taskslist_widget,
                                             null );
       
-      ( (TextView) convertView.findViewById( android.R.id.text1 ) ).setText( captionResId );
+      ( (TextView) convertView.findViewById( android.R.id.text1 ) ).setText( tasksList.getName() );
+      
+      final int numIncompleted = tasksList.getTasksCount()
+                                          .getIncompleteTaskCount();
+      
+      final TextView taskCount = (TextView) convertView.findViewById( R.id.numTasks );
+      if ( numIncompleted > 0 )
+      {
+         taskCount.setText( String.valueOf( numIncompleted ) );
+      }
+      else
+      {
+         taskCount.setVisibility( View.INVISIBLE );
+      }
       
       return convertView;
    }

@@ -24,33 +24,32 @@ package dev.drsoran.moloko.app.tagcloud;
 
 import java.util.Collections;
 
-import android.os.Bundle;
-import android.view.Menu;
+import android.content.Intent;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.app.Intents;
 import dev.drsoran.moloko.app.baseactivities.MolokoActivity;
+import dev.drsoran.moloko.app.home.IntentHandlerBase;
 import dev.drsoran.rtm.parsing.grammar.rtmsmart.RtmSmartFilterSyntax;
 
 
-public class TagCloudActivity extends MolokoActivity implements
+public class TagCloudIntentHandler extends IntentHandlerBase implements
          ITagCloudFragmentListener
 {
-   @Override
-   public void onCreate( Bundle savedInstanceState )
+   public TagCloudIntentHandler( MolokoActivity context, int fragmentId )
    {
-      super.onCreate( savedInstanceState );
-      setContentView( R.layout.tagcloud_activity );
+      super( context, fragmentId );
    }
    
    
    
    @Override
-   public boolean onActivityCreateOptionsMenu( Menu menu )
+   public void handleIntent( Intent intent )
    {
-      getMenuInflater().inflate( R.menu.sync_only, menu );
-      super.onActivityCreateOptionsMenu( menu );
+      final TagCloudFragment fragment = TagCloudFragment.newInstance( intent.getExtras() );
+      fragment.setListener( this );
       
-      return true;
+      getActivity().showFragment( getFragmentId(), fragment );
+      getActivity().setTitle( R.string.app_tagcloud );
    }
    
    
@@ -58,8 +57,7 @@ public class TagCloudActivity extends MolokoActivity implements
    @Override
    public void onOpenList( long listId )
    {
-      startActivityWithHomeAction( Intents.createOpenListIntentById( listId ),
-                                   getClass() );
+      getActivity().startActivity( Intents.createOpenListIntentById( listId ) );
    }
    
    
@@ -67,10 +65,9 @@ public class TagCloudActivity extends MolokoActivity implements
    @Override
    public void onOpenTag( String tag )
    {
-      startActivityWithHomeAction( Intents.createOpenTagsIntent( this,
-                                                                 Collections.singletonList( tag ),
-                                                                 RtmSmartFilterSyntax.AND ),
-                                   getClass() );
+      getActivity().startActivity( Intents.createOpenTasksWithTagsIntent( getActivity(),
+                                                                          Collections.singletonList( tag ),
+                                                                          RtmSmartFilterSyntax.AND ) );
    }
    
    
@@ -78,17 +75,7 @@ public class TagCloudActivity extends MolokoActivity implements
    @Override
    public void onOpenLocation( String locationName )
    {
-      startActivityWithHomeAction( Intents.createOpenLocationIntentByName( this,
-                                                                           locationName ),
-                                   getClass() );
-   }
-   
-   
-   
-   @Override
-   protected int[] getFragmentIds()
-   {
-      return new int[]
-      { R.id.frag_tag_cloud };
+      getActivity().startActivity( Intents.createShowTasksWithLocationNameIntent( getActivity(),
+                                                                                  locationName ) );
    }
 }

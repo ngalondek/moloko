@@ -31,6 +31,7 @@ import org.acra.ReportingInteractionMode;
 import org.acra.annotation.ReportsCrashes;
 
 import android.app.Application;
+import android.app.LoaderManager;
 import android.content.Context;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.res.Configuration;
@@ -99,6 +100,8 @@ public class MolokoApp extends Application implements
       {
          ACRA.init( this );
       }
+      
+      LoaderManager.enableDebugLogging( isDebug );
       
       super.onCreate();
       

@@ -1,5 +1,5 @@
 /* 
- *	Copyright (c) 2012 Ronny Röhricht
+ *	Copyright (c) 2014 Ronny Röhricht
  *
  *	This file is part of Moloko.
  *
@@ -23,26 +23,8 @@
 package dev.drsoran.moloko.app.home;
 
 import android.content.Intent;
-import android.view.View;
 
-
-public interface INavWidget
+public interface IIntentHandler
 {
-   public void setDirty();
-   
-   
-   
-   public void start();
-   
-   
-   
-   public void stop();
-   
-   
-   
-   public Intent getIntent();
-   
-   
-   
-   public View getView( View convertView );
+   void handleIntent( Intent intent );
 }

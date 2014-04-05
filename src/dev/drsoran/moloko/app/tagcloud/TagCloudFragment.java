@@ -76,6 +76,13 @@ public class TagCloudFragment extends MolokoLoaderFragment< List< CloudEntry > >
    
    
    
+   public void setListener( ITagCloudFragmentListener listener )
+   {
+      this.listener = listener;
+   }
+   
+   
+   
    @Override
    public void onAttach( Activity activity )
    {
@@ -245,9 +252,13 @@ public class TagCloudFragment extends MolokoLoaderFragment< List< CloudEntry > >
          final Button button = buttons.get( i );
          
          if ( i > 0 )
+         {
             button.setNextFocusLeftId( buttons.get( i - 1 ).getId() );
+         }
          if ( i < size - 1 )
+         {
             button.setNextFocusRightId( buttons.get( i + 1 ).getId() );
+         }
          
          container.addView( button );
       }
@@ -264,13 +275,17 @@ public class TagCloudFragment extends MolokoLoaderFragment< List< CloudEntry > >
          final Integer min = MAGNIFY_LOOKUP.firstKey();
          
          if ( count < min )
+         {
             result = MAGNIFY_LOOKUP.get( MAGNIFY_LOOKUP.firstKey() );
+         }
          else
          {
             final Integer max = MAGNIFY_LOOKUP.lastKey();
             
             if ( count > max )
+            {
                result = MAGNIFY_LOOKUP.get( MAGNIFY_LOOKUP.lastKey() );
+            }
             else
             {
                final SortedMap< Integer, Float > subMap = MAGNIFY_LOOKUP.headMap( count );

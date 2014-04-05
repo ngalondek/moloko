@@ -70,6 +70,13 @@ public class WidgetWithIcon implements INavWidget
    
    
    @Override
+   public void start()
+   {
+   }
+   
+   
+   
+   @Override
    public void setDirty()
    {
    }
@@ -89,9 +96,12 @@ public class WidgetWithIcon implements INavWidget
       convertView = LayoutInflater.from( context )
                                   .inflate( R.layout.home_activity_drawer_item_with_widget,
                                             null );
-      
       setText( convertView );
-      setIcon( convertView );
+      
+      if ( iconResId != -1 )
+      {
+         setIcon( convertView );
+      }
       
       return convertView;
    }

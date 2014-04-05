@@ -99,18 +99,9 @@ public class ChangeTagsActivity extends MolokoActivity
    private void addChangeTagsFragment()
    {
       getFragmentManager().beginTransaction()
-                                 .setTransition( FragmentTransaction.TRANSIT_FRAGMENT_OPEN )
-                                 .add( R.id.frag_change_tags,
-                                       ChangeTagsFragment.newInstance( getIntent().getExtras() ) )
-                                 .commit();
-   }
-   
-   
-   
-   @Override
-   protected int[] getFragmentIds()
-   {
-      return new int[]
-      { R.id.frag_change_tags };
+                          .setTransition( FragmentTransaction.TRANSIT_FRAGMENT_OPEN )
+                          .add( R.id.frag_change_tags,
+                                ChangeTagsFragment.newInstance( getIntent().getExtras() ) )
+                          .commit();
    }
 }

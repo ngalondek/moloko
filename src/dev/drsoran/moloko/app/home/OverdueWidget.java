@@ -37,7 +37,6 @@ import dev.drsoran.moloko.domain.model.Task;
 import dev.drsoran.moloko.domain.services.ContentException;
 import dev.drsoran.moloko.domain.services.TaskContentOptions;
 import dev.drsoran.rtm.Iterables;
-import dev.drsoran.rtm.parsing.GrammarException;
 import dev.drsoran.rtm.parsing.grammar.rtmsmart.RtmSmartFilterBuilder;
 
 
@@ -104,10 +103,6 @@ public class OverdueWidget extends AsyncLoadingTasksCountWidget
          return Iterables.size( tasks );
       }
       catch ( ContentException e )
-      {
-         domainContext.Log().e( getClass(), e.getLocalizedMessage() );
-      }
-      catch ( GrammarException e )
       {
          domainContext.Log().e( getClass(), e.getLocalizedMessage() );
       }

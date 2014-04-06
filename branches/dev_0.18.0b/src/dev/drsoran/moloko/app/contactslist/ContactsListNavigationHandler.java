@@ -24,15 +24,13 @@ package dev.drsoran.moloko.app.contactslist;
 
 import android.content.Intent;
 import dev.drsoran.moloko.R;
-import dev.drsoran.moloko.app.Intents;
 import dev.drsoran.moloko.app.baseactivities.MolokoActivity;
-import dev.drsoran.moloko.app.home.IntentHandlerBase;
+import dev.drsoran.moloko.app.home.NavigationHandlerBase;
 
 
-public class ContactsListIntentHandler extends IntentHandlerBase implements
-         IContactsListFragmentListener
+public class ContactsListNavigationHandler extends NavigationHandlerBase
 {
-   public ContactsListIntentHandler( MolokoActivity activity, int fragmentId )
+   public ContactsListNavigationHandler( MolokoActivity activity, int fragmentId )
    {
       super( activity, fragmentId );
    }
@@ -43,27 +41,17 @@ public class ContactsListIntentHandler extends IntentHandlerBase implements
    public void handleIntent( Intent intent )
    {
       final ContactsListFragment fragment = ContactsListFragment.newInstance( intent.getExtras() );
-      fragment.setListener( this );
       
       getActivity().showFragment( getFragmentId(), fragment );
+      
+   }
+   
+   
+   
+   @Override
+   public void setActivityTitle()
+   {
       getActivity().setTitle( R.string.app_contacts );
-   }
-   
-   
-   
-   @Override
-   public void onShowPhoneBookEntryOfContact( String lookUpKey )
-   {
-      getActivity().startActivity( Intents.createShowPhonebookContactIntent( lookUpKey ) );
-   }
-   
-   
-   
-   @Override
-   public void onShowTasksOfContact( String fullname, String username )
-   {
-      getActivity().startActivity( Intents.createShowTasksOfContactIntent( getActivity(),
-                                                                           fullname,
-                                                                           username ) );
+      getActivity().getActionBar().setSubtitle( null );
    }
 }

@@ -28,7 +28,7 @@ import java.util.List;
 import dev.drsoran.moloko.domain.model.Task;
 
 
-interface ITasksListActionModeListener
+public interface ITasksListActionModeListener
 {
    void onEditTasks( List< ? extends Task > tasks );
    
@@ -50,7 +50,7 @@ interface ITasksListActionModeListener
    
    
    
-   void onOpenTaskLocation( Task task );
+   void onOpenLocation( String locationName );
    
    
    

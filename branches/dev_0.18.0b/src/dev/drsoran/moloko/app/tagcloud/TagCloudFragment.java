@@ -24,6 +24,7 @@ package dev.drsoran.moloko.app.tagcloud;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.SortedMap;
 import java.util.TreeMap;
@@ -38,13 +39,16 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import dev.drsoran.moloko.R;
+import dev.drsoran.moloko.app.Intents;
 import dev.drsoran.moloko.app.loaders.CloudEntryLoader;
 import dev.drsoran.moloko.domain.model.CloudEntry;
 import dev.drsoran.moloko.ui.UiUtils;
 import dev.drsoran.moloko.ui.fragments.MolokoLoaderFragment;
+import dev.drsoran.rtm.parsing.grammar.rtmsmart.RtmSmartFilterSyntax;
 
 
 public class TagCloudFragment extends MolokoLoaderFragment< List< CloudEntry > >
+         implements ITagCloudFragmentListener
 {
    /**
     * Relationship between task count and text size.
@@ -61,8 +65,6 @@ public class TagCloudFragment extends MolokoLoaderFragment< List< CloudEntry > >
       MAGNIFY_LOOKUP.put( 20, 1.6f );
    }
    
-   private ITagCloudFragmentListener listener;
-   
    
    
    public final static TagCloudFragment newInstance( Bundle config )
@@ -72,35 +74,6 @@ public class TagCloudFragment extends MolokoLoaderFragment< List< CloudEntry > >
       fragment.setArguments( config );
       
       return fragment;
-   }
-   
-   
-   
-   public void setListener( ITagCloudFragmentListener listener )
-   {
-      this.listener = listener;
-   }
-   
-   
-   
-   @Override
-   public void onAttach( Activity activity )
-   {
-      super.onAttach( activity );
-      
-      if ( activity instanceof ITagCloudFragmentListener )
-         listener = (ITagCloudFragmentListener) activity;
-      else
-         listener = null;
-   }
-   
-   
-   
-   @Override
-   public void onDetach()
-   {
-      listener = null;
-      super.onDetach();
    }
    
    
@@ -180,7 +153,7 @@ public class TagCloudFragment extends MolokoLoaderFragment< List< CloudEntry > >
                                        18 * getMagnifyFactor( cloudEntry.getCount() ) );
          
          cloudEntry.present( cloudEntryButton );
-         cloudEntry.setTagCloudFragmentListener( listener );
+         cloudEntry.setTagCloudFragmentListener( this );
          
          if ( cloudEntry.getCount() > 1 )
          {
@@ -191,6 +164,7 @@ public class TagCloudFragment extends MolokoLoaderFragment< List< CloudEntry > >
       }
       
       final ViewGroup tagContainer = (ViewGroup) activity.findViewById( R.id.tagcloud_container );
+      tagContainer.removeAllViews();
       
       addButtons( buttons, tagContainer );
    }
@@ -295,5 +269,32 @@ public class TagCloudFragment extends MolokoLoaderFragment< List< CloudEntry > >
       }
       
       return result;
+   }
+   
+   
+   
+   @Override
+   public void onOpenList( long listId )
+   {
+      startActivity( Intents.createOpenListIntentById( listId ) );
+   }
+   
+   
+   
+   @Override
+   public void onOpenTag( String tag )
+   {
+      startActivity( Intents.createOpenTasksWithTagsIntent( getActivity(),
+                                                            Collections.singletonList( tag ),
+                                                            RtmSmartFilterSyntax.AND ) );
+   }
+   
+   
+   
+   @Override
+   public void onOpenLocation( String locationName )
+   {
+      startActivity( Intents.createShowTasksWithLocationNameIntent( getActivity(),
+                                                                    locationName ) );
    }
 }

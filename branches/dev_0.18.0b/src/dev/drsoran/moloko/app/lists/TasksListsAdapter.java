@@ -159,8 +159,7 @@ public class TasksListsAdapter extends BaseExpandableListAdapter
       switch ( childPosition + 1 )
       {
          case DUE_TODAY_TASK_COUNT:
-            intent = Intents.createOpenListIntent( context,
-                                                   list,
+            intent = Intents.createOpenListIntent( list,
                                                    new RtmSmartFilterBuilder().due()
                                                                               .today()
                                                                               .toString() );
@@ -169,8 +168,7 @@ public class TasksListsAdapter extends BaseExpandableListAdapter
             break;
          
          case DUE_TOMORROW_TASK_COUNT:
-            intent = Intents.createOpenListIntent( context,
-                                                   list,
+            intent = Intents.createOpenListIntent( list,
                                                    new RtmSmartFilterBuilder().due()
                                                                               .tomorrow()
                                                                               .toString() );
@@ -179,8 +177,7 @@ public class TasksListsAdapter extends BaseExpandableListAdapter
             break;
          
          case OVER_DUE_TASK_COUNT:
-            intent = Intents.createOpenListIntent( context,
-                                                   list,
+            intent = Intents.createOpenListIntent( list,
                                                    new RtmSmartFilterBuilder().dueBefore()
                                                                               .today()
                                                                               .toString() );
@@ -189,8 +186,7 @@ public class TasksListsAdapter extends BaseExpandableListAdapter
             break;
          
          case COMPLETED_TASK_COUNT:
-            intent = Intents.createOpenListIntent( context,
-                                                   list,
+            intent = Intents.createOpenListIntent( list,
                                                    new RtmSmartFilterBuilder().statusCompleted()
                                                                               .toString() );
             intent.putExtra( Intents.Extras.KEY_ACTIVITY_SUB_TITLE,

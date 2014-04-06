@@ -22,34 +22,23 @@
 
 package dev.drsoran.moloko.app.home;
 
-import dev.drsoran.moloko.app.baseactivities.MolokoActivity;
+import android.content.Intent;
+import android.view.ActionMode;
 
 
-public abstract class IntentHandlerBase implements IIntentHandler
+public interface INavigationHandler
 {
-   private final MolokoActivity activity;
-   
-   private final int fragmentId;
+   void handleIntent( Intent intent );
    
    
    
-   protected IntentHandlerBase( MolokoActivity activity, int fragmentId )
-   {
-      this.activity = activity;
-      this.fragmentId = fragmentId;
-   }
+   void setActivityTitle();
    
    
    
-   public MolokoActivity getActivity()
-   {
-      return activity;
-   }
+   void onActionModeStarted( ActionMode mode );
    
    
    
-   public int getFragmentId()
-   {
-      return fragmentId;
-   }
+   void onActionModeFinished( ActionMode mode );
 }

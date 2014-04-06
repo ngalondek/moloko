@@ -63,15 +63,13 @@ class TasksListNavigationAdapter extends SwappableArrayAdapter< IItem >
    
    public static class RtmListItem implements IItem
    {
-      private final Context context;
       
       private final TasksList list;
       
       
       
-      public RtmListItem( Context context, TasksList list )
+      public RtmListItem( TasksList list )
       {
-         this.context = context;
          this.list = list;
       }
       
@@ -112,7 +110,7 @@ class TasksListNavigationAdapter extends SwappableArrayAdapter< IItem >
       @Override
       public Bundle getTasksListConfig()
       {
-         return Intents.Extras.createOpenListExtras( context, list, null );
+         return Intents.Extras.createOpenListExtras( list, null );
       }
    }
    
@@ -127,10 +125,10 @@ class TasksListNavigationAdapter extends SwappableArrayAdapter< IItem >
       
       
       
-      public ExtendedRtmListItem( Context context, String typeOfTasks,
-         TasksList list, int numTasks )
+      public ExtendedRtmListItem( String typeOfTasks, TasksList list,
+         int numTasks )
       {
-         super( context, list );
+         super( list );
          this.supplementalText = typeOfTasks;
          this.numTasks = numTasks;
       }

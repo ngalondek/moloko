@@ -35,13 +35,13 @@ import dev.drsoran.rtm.Pair;
 
 class TasksListActionModeCallback extends BaseMultiChoiceModeListener< Task >
 {
-   private final AbstractTasksListFragment fragment;
+   private final TasksListFragment fragment;
    
    private ITasksListActionModeListener listener;
    
    
    
-   public TasksListActionModeCallback( AbstractTasksListFragment fragment )
+   public TasksListActionModeCallback( TasksListFragment fragment )
    {
       super( fragment.getListView() );
       this.fragment = fragment;
@@ -170,7 +170,7 @@ class TasksListActionModeCallback extends BaseMultiChoiceModeListener< Task >
                break;
             
             case R.id.menu_open_tasks_at_loc:
-               listener.onOpenTaskLocation( getSelectedTask() );
+               listener.onOpenLocation( getSelectedTask().getLocationName() );
                break;
             
             default :

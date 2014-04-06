@@ -72,7 +72,7 @@ public class TasksListWidget implements INavWidget
    @Override
    public Intent getIntent()
    {
-      return Intents.createOpenListIntent( context, tasksList, null );
+      return Intents.createOpenListIntent( tasksList, null );
    }
    
    

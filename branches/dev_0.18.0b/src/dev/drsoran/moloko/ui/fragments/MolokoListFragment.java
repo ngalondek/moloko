@@ -30,12 +30,9 @@ import android.app.LoaderManager.LoaderCallbacks;
 import android.content.Loader;
 import android.os.Bundle;
 import android.text.Spanned;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import dev.drsoran.moloko.IConfigurable;
 import dev.drsoran.moloko.ui.UiContext;
-import dev.drsoran.moloko.ui.adapters.SwappableArrayAdapter;
 import dev.drsoran.moloko.ui.fragments.impl.ConfigurableFragmentImpl;
 import dev.drsoran.moloko.ui.fragments.impl.LoaderListFragmentImpl;
 import dev.drsoran.moloko.ui.fragments.impl.RtmAccessLevelFragmentImpl;
@@ -291,33 +288,6 @@ public abstract class MolokoListFragment< D > extends ListFragment implements
    {
       loaderImpl.showError( message );
    }
-   
-   
-   
-   @Override
-   public abstract View onCreateView( LayoutInflater inflater,
-                                      ViewGroup container,
-                                      Bundle savedInstanceState );
-   
-   
-   
-   @Override
-   public abstract Loader< List< D > > newLoaderInstance( int id, Bundle config );
-   
-   
-   
-   @Override
-   public abstract String getLoaderDataName();
-   
-   
-   
-   @Override
-   public abstract int getLoaderId();
-   
-   
-   
-   @Override
-   public abstract SwappableArrayAdapter< D > createListAdapter();
    
    
    

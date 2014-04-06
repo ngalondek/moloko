@@ -22,20 +22,15 @@
 
 package dev.drsoran.moloko.app.tagcloud;
 
-import java.util.Collections;
-
 import android.content.Intent;
 import dev.drsoran.moloko.R;
-import dev.drsoran.moloko.app.Intents;
 import dev.drsoran.moloko.app.baseactivities.MolokoActivity;
-import dev.drsoran.moloko.app.home.IntentHandlerBase;
-import dev.drsoran.rtm.parsing.grammar.rtmsmart.RtmSmartFilterSyntax;
+import dev.drsoran.moloko.app.home.NavigationHandlerBase;
 
 
-public class TagCloudIntentHandler extends IntentHandlerBase implements
-         ITagCloudFragmentListener
+public class TagCloudNavigationHandler extends NavigationHandlerBase
 {
-   public TagCloudIntentHandler( MolokoActivity context, int fragmentId )
+   public TagCloudNavigationHandler( MolokoActivity context, int fragmentId )
    {
       super( context, fragmentId );
    }
@@ -46,36 +41,15 @@ public class TagCloudIntentHandler extends IntentHandlerBase implements
    public void handleIntent( Intent intent )
    {
       final TagCloudFragment fragment = TagCloudFragment.newInstance( intent.getExtras() );
-      fragment.setListener( this );
-      
       getActivity().showFragment( getFragmentId(), fragment );
+   }
+   
+   
+   
+   @Override
+   public void setActivityTitle()
+   {
       getActivity().setTitle( R.string.app_tagcloud );
-   }
-   
-   
-   
-   @Override
-   public void onOpenList( long listId )
-   {
-      getActivity().startActivity( Intents.createOpenListIntentById( listId ) );
-   }
-   
-   
-   
-   @Override
-   public void onOpenTag( String tag )
-   {
-      getActivity().startActivity( Intents.createOpenTasksWithTagsIntent( getActivity(),
-                                                                          Collections.singletonList( tag ),
-                                                                          RtmSmartFilterSyntax.AND ) );
-   }
-   
-   
-   
-   @Override
-   public void onOpenLocation( String locationName )
-   {
-      getActivity().startActivity( Intents.createShowTasksWithLocationNameIntent( getActivity(),
-                                                                                  locationName ) );
+      getActivity().getActionBar().setSubtitle( null );
    }
 }

@@ -111,9 +111,7 @@ public class TaskListsActivity extends MolokoEditActivity implements
       
       if ( fireIntent )
       {
-         final Intent intent = Intents.createOpenListIntent( this,
-                                                             tasksList,
-                                                             null );
+         final Intent intent = Intents.createOpenListIntent( tasksList, null );
          startActivityWithHomeAction( intent, getClass() );
       }
    }

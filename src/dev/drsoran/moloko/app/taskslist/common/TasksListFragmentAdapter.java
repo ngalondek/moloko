@@ -42,7 +42,7 @@ import dev.drsoran.rtm.parsing.rtmsmart.RtmSmartFilterToken;
 import dev.drsoran.rtm.parsing.rtmsmart.RtmSmartFilterTokenCollection;
 
 
-class FullDetailedTasksListFragmentAdapter extends
+class TasksListFragmentAdapter extends
          AbstractTasksListFragmentAdapter
 {
    public final static int FLAG_SHOW_ALL = 1 << 0;
@@ -55,7 +55,7 @@ class FullDetailedTasksListFragmentAdapter extends
    
    
    
-   public FullDetailedTasksListFragmentAdapter( AppContext context,
+   public TasksListFragmentAdapter( AppContext context,
       ListView listView, RtmSmartFilterTokenCollection rtmSmartFilterTokens,
       int flags )
    {

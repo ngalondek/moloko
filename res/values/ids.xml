@@ -266,6 +266,9 @@
       name="tasks_lists_loader" />
    <item
       type="id"
+      name="tasks_list_loader" />
+   <item
+      type="id"
       name="loader_notes" />
    <item
       type="id"

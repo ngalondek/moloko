@@ -24,7 +24,6 @@ package dev.drsoran.moloko.app.contactslist;
 
 import java.util.List;
 
-import android.app.Activity;
 import android.content.Loader;
 import android.os.Bundle;
 import android.view.ContextMenu;
@@ -36,6 +35,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.ListView;
 import dev.drsoran.moloko.R;
+import dev.drsoran.moloko.app.Intents;
 import dev.drsoran.moloko.app.loaders.ContactsLoader;
 import dev.drsoran.moloko.domain.DomainContext;
 import dev.drsoran.moloko.ui.adapters.SwappableArrayAdapter;
@@ -44,10 +44,6 @@ import dev.drsoran.moloko.ui.fragments.MolokoListFragment;
 
 public class ContactsListFragment extends MolokoListFragment< LinkedContact >
 {
-   private IContactsListFragmentListener listener;
-   
-   
-   
    public final static ContactsListFragment newInstance( Bundle config )
    {
       final ContactsListFragment fragment = new ContactsListFragment();
@@ -66,40 +62,11 @@ public class ContactsListFragment extends MolokoListFragment< LinkedContact >
    
    
    
-   public void setListener( IContactsListFragmentListener listener )
-   {
-      this.listener = listener;
-   }
-   
-   
-   
-   @Override
-   public void onAttach( Activity activity )
-   {
-      super.onAttach( activity );
-      
-      if ( activity instanceof IContactsListFragmentListener )
-         listener = (IContactsListFragmentListener) activity;
-      else
-         listener = null;
-   }
-   
-   
-   
    @Override
    public void onActivityCreated( Bundle savedInstanceState )
    {
       super.onActivityCreated( savedInstanceState );
       registerForContextMenu( getListView() );
-   }
-   
-   
-   
-   @Override
-   public void onDetach()
-   {
-      listener = null;
-      super.onDetach();
    }
    
    
@@ -149,10 +116,7 @@ public class ContactsListFragment extends MolokoListFragment< LinkedContact >
       {
          case R.id.ctx_menu_show_phonebook_contact:
             final LinkedContact contact = getListAdapter().getItem( info.position );
-            
-            if ( listener != null )
-               listener.onShowPhoneBookEntryOfContact( contact.getLookUpKey() );
-            
+            onShowPhoneBookEntryOfContact( contact.getLookUpKey() );
             return true;
             
          default :
@@ -165,12 +129,8 @@ public class ContactsListFragment extends MolokoListFragment< LinkedContact >
    @Override
    public void onListItemClick( ListView l, View v, int position, long id )
    {
-      if ( listener != null )
-      {
-         final LinkedContact contact = getListAdapter().getItem( position );
-         listener.onShowTasksOfContact( contact.getFullName(),
-                                        contact.getUserName() );
-      }
+      final LinkedContact contact = getListAdapter().getItem( position );
+      onShowTasksOfContact( contact.getFullName(), contact.getUserName() );
    }
    
    
@@ -222,10 +182,7 @@ public class ContactsListFragment extends MolokoListFragment< LinkedContact >
    
    public void onCallButtonClicked( LinkedContact contact )
    {
-      if ( listener != null )
-      {
-         listener.onShowPhoneBookEntryOfContact( contact.getLookUpKey() );
-      }
+      onShowPhoneBookEntryOfContact( contact.getLookUpKey() );
    }
    
    
@@ -234,5 +191,21 @@ public class ContactsListFragment extends MolokoListFragment< LinkedContact >
    public int getChoiceMode()
    {
       return ListView.CHOICE_MODE_NONE;
+   }
+   
+   
+   
+   private void onShowPhoneBookEntryOfContact( String lookUpKey )
+   {
+      startActivity( Intents.createShowPhonebookContactIntent( lookUpKey ) );
+   }
+   
+   
+   
+   private void onShowTasksOfContact( String fullname, String username )
+   {
+      startActivity( Intents.createShowTasksOfContactIntent( getActivity(),
+                                                             fullname,
+                                                             username ) );
    }
 }

@@ -212,8 +212,7 @@ public final class Intents
       
       
       
-      public final static Bundle createOpenListExtras( Context context,
-                                                       TasksList list,
+      public final static Bundle createOpenListExtras( TasksList list,
                                                        String additionalSmartFilter )
       {
          final RtmSmartFilterBuilder smartFilterBuilder = new RtmSmartFilterBuilder();
@@ -239,11 +238,8 @@ public final class Intents
                               .rParenth();
          }
          
-         final Bundle extras = createSmartFilterExtras( context,
-                                                        new RtmSmartFilter( smartFilterBuilder.toString() ),
-                                                        context.getString( R.string.taskslist_actionbar,
-                                                                           list.getName() ) );
-         extras.putString( Intents.Extras.KEY_LIST_NAME, list.getName() );
+         final Bundle extras = new Bundle( 1 );
+         extras.putSerializable( Intents.Extras.KEY_LIST, list );
          
          return extras;
       }
@@ -546,12 +542,10 @@ public final class Intents
    
    
    
-   public final static Intent createOpenListIntent( Context context,
-                                                    TasksList list,
+   public final static Intent createOpenListIntent( TasksList list,
                                                     String additionalSmartFilter )
    {
-      return new Intent( Intent.ACTION_VIEW, ContentUris.TASKS_CONTENT_URI ).putExtras( Extras.createOpenListExtras( context,
-                                                                                                                     list,
+      return new Intent( Intent.ACTION_VIEW, ContentUris.TASKS_CONTENT_URI ).putExtras( Extras.createOpenListExtras( list,
                                                                                                                      additionalSmartFilter ) );
    }
    

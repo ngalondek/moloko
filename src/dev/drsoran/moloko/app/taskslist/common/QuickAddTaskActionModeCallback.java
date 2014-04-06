@@ -41,7 +41,7 @@ import dev.drsoran.moloko.ui.widgets.RtmSmartAddTextViewTokenizer;
 class QuickAddTaskActionModeCallback implements ActionMode.Callback,
          IQuickAddTaskButtonBarFragmentListener
 {
-   private final AbstractFullDetailedTasksListActivity activity;
+   private final TasksListFragment tasksListFragment;
    
    private final RtmSmartFilter filter;
    
@@ -51,10 +51,10 @@ class QuickAddTaskActionModeCallback implements ActionMode.Callback,
    
    
    
-   public QuickAddTaskActionModeCallback(
-      AbstractFullDetailedTasksListActivity activity, RtmSmartFilter filter )
+   public QuickAddTaskActionModeCallback( TasksListFragment fragment,
+      RtmSmartFilter filter )
    {
-      this.activity = activity;
+      this.tasksListFragment = fragment;
       this.filter = filter;
    }
    
@@ -63,17 +63,17 @@ class QuickAddTaskActionModeCallback implements ActionMode.Callback,
    @Override
    public boolean onCreateActionMode( ActionMode mode, Menu menu )
    {
-      final View quickAddTaskInputView = LayoutInflater.from( activity )
+      final View quickAddTaskInputView = LayoutInflater.from( tasksListFragment.getActivity() )
                                                        .inflate( R.layout.quick_add_task_actionmode,
                                                                  null );
       mode.setCustomView( quickAddTaskInputView );
       
-      final UiContext uiContext = activity.getAppContext().asUiContext();
+      final UiContext uiContext = tasksListFragment.getUiContext();
       
       quickAddTaskInput = (RtmSmartAddTextView) quickAddTaskInputView.findViewById( R.id.quick_add_task_edit );
       quickAddTaskInput.setTokenizer( new RtmSmartAddTextViewTokenizer( uiContext.getSmartAddService() ) );
       quickAddTaskInput.setThreshold( 1 );
-      quickAddTaskInput.setAdapter( new RtmSmartAddAdapter( activity,
+      quickAddTaskInput.setAdapter( new RtmSmartAddAdapter( tasksListFragment.getActivity(),
                                                             uiContext.getSmartAddService() ) );
       
       connectToCommitInput();
@@ -140,7 +140,7 @@ class QuickAddTaskActionModeCallback implements ActionMode.Callback,
       if ( fragment == null )
       {
          fragment = QuickAddTaskButtonBarFragment.newInstance( null );
-         activity.addBottomFragment( fragment ).commit();
+         tasksListFragment.addButtonBarFragment( fragment ).commit();
       }
       
       fragment.setQuickAddTaskButtonBarFragmentListener( this );
@@ -154,7 +154,7 @@ class QuickAddTaskActionModeCallback implements ActionMode.Callback,
       if ( fragment != null )
       {
          fragment.setQuickAddTaskButtonBarFragmentListener( null );
-         activity.removeBottomFragment();
+         tasksListFragment.removeButtonBarFragment();
       }
    }
    
@@ -162,7 +162,7 @@ class QuickAddTaskActionModeCallback implements ActionMode.Callback,
    
    private QuickAddTaskButtonBarFragment getButtonBarFragment()
    {
-      return activity.getBottomFragment( QuickAddTaskButtonBarFragment.class );
+      return tasksListFragment.getButtonBarFragment();
    }
    
    
@@ -196,9 +196,9 @@ class QuickAddTaskActionModeCallback implements ActionMode.Callback,
    
    private void onInputCommitted()
    {
-      if ( activity instanceof IQuickAddTaskActionModeListener )
+      if ( tasksListFragment instanceof IQuickAddTaskActionModeListener )
       {
-         ( (IQuickAddTaskActionModeListener) activity ).onQuickAddAddNewTask( quickAddTaskInputHandler.getNewTaskConfig() );
+         ( (IQuickAddTaskActionModeListener) tasksListFragment ).onQuickAddAddNewTask( quickAddTaskInputHandler.getNewTaskConfig() );
       }
    }
 }

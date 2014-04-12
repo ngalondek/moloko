@@ -220,7 +220,7 @@ public class TaskFragment extends MolokoLoaderFragment< Task > implements
    
    private void onCreateOptionsMenuImpl( Menu menu, MenuInflater inflater )
    {
-      if ( task != null && hasWritableAccess() )
+      if ( task != null && isWritableAccess() )
       {
          inflater.inflate( R.menu.task_fragment_rwd, menu );
       }

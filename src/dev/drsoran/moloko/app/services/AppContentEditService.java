@@ -341,7 +341,7 @@ public class AppContentEditService implements IAppContentEditService
    
    private boolean checkWritableAccess( Activity context )
    {
-      if ( !hasWritableAccess() )
+      if ( !isWritableAccess() )
       {
          showOnlyReadableDatabaseAccessDialog( context );
          return false;
@@ -428,7 +428,7 @@ public class AppContentEditService implements IAppContentEditService
    
    
    
-   private boolean hasWritableAccess()
+   private boolean isWritableAccess()
    {
       return accountService.isWriteableAccess( accountService.getRtmAccount() );
    }

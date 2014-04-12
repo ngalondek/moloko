@@ -161,7 +161,7 @@ public abstract class MolokoFragment extends Fragment implements IConfigurable
    
    
    
-   public boolean hasWritableAccess()
+   public boolean isWritableAccess()
    {
       return accessImpl.hasWritableAccess();
    }

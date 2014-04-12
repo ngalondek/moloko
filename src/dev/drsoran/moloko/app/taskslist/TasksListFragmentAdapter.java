@@ -20,11 +20,13 @@
  * Ronny Röhricht - implementation
  */
 
-package dev.drsoran.moloko.app.taskslist.common;
+package dev.drsoran.moloko.app.taskslist;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 
+import android.database.DataSetObserver;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
@@ -34,16 +36,24 @@ import android.widget.ListView;
 import android.widget.TextView;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.app.AppContext;
+import dev.drsoran.moloko.app.settings.SettingConstants;
 import dev.drsoran.moloko.domain.model.Task;
+import dev.drsoran.moloko.domain.sort.CompositeComparator;
+import dev.drsoran.moloko.domain.sort.SortTaskDueDate;
+import dev.drsoran.moloko.domain.sort.SortTaskName;
+import dev.drsoran.moloko.domain.sort.SortTaskPriority;
 import dev.drsoran.moloko.ui.UiUtils;
+import dev.drsoran.moloko.ui.adapters.MultiChoiceModalArrayAdapter;
+import dev.drsoran.moloko.ui.format.RtmStyleTaskDateFormatter;
+import dev.drsoran.moloko.ui.format.RtmStyleTaskDescTextViewFormatter;
 import dev.drsoran.moloko.ui.widgets.SimpleLineView;
+import dev.drsoran.rtm.parsing.IRtmCalendarProvider;
 import dev.drsoran.rtm.parsing.grammar.antlr.rtmsmart.RtmSmartFilterLexer;
 import dev.drsoran.rtm.parsing.rtmsmart.RtmSmartFilterToken;
 import dev.drsoran.rtm.parsing.rtmsmart.RtmSmartFilterTokenCollection;
 
 
-class TasksListFragmentAdapter extends
-         AbstractTasksListFragmentAdapter
+class TasksListFragmentAdapter extends MultiChoiceModalArrayAdapter< Task >
 {
    public final static int FLAG_SHOW_ALL = 1 << 0;
    
@@ -53,19 +63,57 @@ class TasksListFragmentAdapter extends
    
    private final int flags;
    
+   private final RtmStyleTaskDateFormatter taskDateFormatter;
    
+   private final IRtmCalendarProvider calendarProvider;
    
-   public TasksListFragmentAdapter( AppContext context,
-      ListView listView, RtmSmartFilterTokenCollection rtmSmartFilterTokens,
-      int flags )
+   private final DataSetObserver dataSetObserver = new DataSetObserver()
    {
-      super( listView,
-             R.layout.fulldetailed_taskslist_listitem,
-             R.layout.mindetailed_selectable_taskslist_listitem );
+      @Override
+      public void onChanged()
+      {
+         super.onChanged();
+         lastTasksSort = -1;
+      }
+      
+      
+      
+      @Override
+      public void onInvalidated()
+      {
+         super.onInvalidated();
+         lastTasksSort = -1;
+      }
+   };
+   
+   private int lastTasksSort;
+   
+   
+   
+   public TasksListFragmentAdapter( AppContext context, ListView listView,
+      RtmSmartFilterTokenCollection rtmSmartFilterTokens, int flags )
+   {
+      super( listView, R.layout.fulldetailed_taskslist_listitem );
       
       this.flags = flags;
       this.rtmSmartFilterTokens = rtmSmartFilterTokens;
       
+      this.tagsToRemove = determineTagsToRemove( rtmSmartFilterTokens, flags );
+      
+      this.taskDateFormatter = new RtmStyleTaskDateFormatter( getUiContext() );
+      
+      final AppContext appContext = AppContext.get( getContext() );
+      this.lastTasksSort = appContext.getSettings().getTaskSort();
+      this.calendarProvider = appContext.getCalendarProvider();
+      
+      registerDataSetObserver( dataSetObserver );
+   }
+   
+   
+   
+   private String[] determineTagsToRemove( RtmSmartFilterTokenCollection rtmSmartFilterTokens,
+                                           int flags )
+   {
       if ( ( flags & FLAG_SHOW_ALL ) != FLAG_SHOW_ALL )
       {
          final List< String > tagsToRemove = new ArrayList< String >();
@@ -79,12 +127,41 @@ class TasksListFragmentAdapter extends
             }
          }
          
-         this.tagsToRemove = new String[ tagsToRemove.size() ];
-         tagsToRemove.toArray( this.tagsToRemove );
+         final String[] tags = new String[ tagsToRemove.size() ];
+         tagsToRemove.toArray( tags );
+         
+         return tags;
       }
-      else
+      
+      return null;
+   }
+   
+   
+   
+   public void sort( int taskSort )
+   {
+      if ( lastTasksSort != taskSort )
       {
-         this.tagsToRemove = null;
+         switch ( taskSort )
+         {
+            case SettingConstants.TASK_SORT_PRIORITY:
+               sort( new CompositeComparator< Task >( new SortTaskPriority() ).add( new SortTaskDueDate() ) );
+               break;
+            
+            case SettingConstants.TASK_SORT_DUE_DATE:
+               sort( new CompositeComparator< Task >( new SortTaskDueDate() ).add( new SortTaskPriority() ) );
+               break;
+            
+            case SettingConstants.TASK_SORT_NAME:
+               sort( new SortTaskName() );
+               break;
+            
+            default :
+               throw new IllegalArgumentException( MessageFormat.format( "{0} is no valid sort",
+                                                                         taskSort ) );
+         }
+         
+         lastTasksSort = taskSort;
       }
    }
    
@@ -94,6 +171,8 @@ class TasksListFragmentAdapter extends
    public View getView( int position, View convertView, ViewGroup parent )
    {
       convertView = super.getView( position, convertView, parent );
+      
+      defaultInitializeListItemView( position, convertView );
       
       if ( !isInMultiChoiceModalActionMode() )
       {
@@ -126,7 +205,66 @@ class TasksListFragmentAdapter extends
    
    
    
-   private final void setListName( TextView view, Task task )
+   @Override
+   public long getItemId( int position )
+   {
+      // Note: We handle the case for queries out of bounds because the
+      // Android runtime asks us for invalid positions if the last element
+      // is removed and we get a changed data set.
+      if ( position < getCount() )
+      {
+         return getItem( position ).getId();
+      }
+      else
+      {
+         return -1;
+      }
+   }
+   
+   
+   
+   private void defaultInitializeListItemView( int position, View convertView )
+   {
+      final ImageView completed = (ImageView) convertView.findViewById( R.id.taskslist_listitem_check );
+      final TextView description = (TextView) convertView.findViewById( R.id.taskslist_listitem_desc );
+      final TextView dueDate = (TextView) convertView.findViewById( R.id.taskslist_listitem_due_date );
+      
+      final Task task = getItem( position );
+      
+      RtmStyleTaskDescTextViewFormatter.setTaskDescription( description,
+                                                            task,
+                                                            calendarProvider.getNowMillisUtc() );
+      setDueDate( dueDate, task );
+      setCompleted( completed, task );
+   }
+   
+   
+   
+   private void setDueDate( TextView view, Task task )
+   {
+      final String formattedDueDate = taskDateFormatter.getFormattedDueDate( task );
+      
+      if ( !TextUtils.isEmpty( formattedDueDate ) )
+      {
+         view.setVisibility( View.VISIBLE );
+         view.setText( formattedDueDate );
+      }
+      else
+      {
+         view.setVisibility( View.GONE );
+      }
+   }
+   
+   
+   
+   private void setCompleted( ImageView view, Task task )
+   {
+      view.setEnabled( task.isComplete() );
+   }
+   
+   
+   
+   private void setListName( TextView view, Task task )
    {
       if ( ( flags & FLAG_SHOW_ALL ) == FLAG_SHOW_ALL
          || !rtmSmartFilterTokens.hasUniqueOperatorWithValue( RtmSmartFilterLexer.OP_LIST,
@@ -173,20 +311,5 @@ class TasksListFragmentAdapter extends
       }
       
       UiUtils.inflateTags( getContext(), tagsLayout, task.getTags(), tagsConfig );
-   }
-   
-   
-   
-   @Override
-   protected boolean mustSwitchLayout( View convertView )
-   {
-      if ( isInMultiChoiceModalActionMode() )
-      {
-         return convertView.findViewById( R.id.taskslist_selectable_mindetailed_listitem ) == null;
-      }
-      else
-      {
-         return convertView.findViewById( R.id.taskslist_fulldetailed_listitem ) == null;
-      }
    }
 }

@@ -160,7 +160,7 @@ public class NotesListFragment extends MolokoListFragment< Note > implements
    
    private void onCreateOptionsMenuImpl( Menu menu, MenuInflater inflater )
    {
-      if ( getListAdapter() != null && hasWritableAccess() )
+      if ( getListAdapter() != null && isWritableAccess() )
       {
          inflater.inflate( R.menu.noteslist_fragment_rwd, menu );
       }
@@ -271,7 +271,7 @@ public class NotesListFragment extends MolokoListFragment< Note > implements
    @Override
    public int getChoiceMode()
    {
-      return hasWritableAccess() ? ListView.CHOICE_MODE_MULTIPLE_MODAL
+      return isWritableAccess() ? ListView.CHOICE_MODE_MULTIPLE_MODAL
                                 : ListView.CHOICE_MODE_NONE;
    }
    

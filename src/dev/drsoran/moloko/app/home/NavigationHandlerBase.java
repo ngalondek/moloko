@@ -22,12 +22,15 @@
 
 package dev.drsoran.moloko.app.home;
 
-import android.view.ActionMode;
+import android.content.Intent;
 import dev.drsoran.moloko.app.baseactivities.MolokoActivity;
+import dev.drsoran.moloko.state.AnnotatedConfigurationSupport;
 
 
 public abstract class NavigationHandlerBase implements INavigationHandler
 {
+   private final AnnotatedConfigurationSupport annotatedConfigurationSupport = new AnnotatedConfigurationSupport();
+   
    private final MolokoActivity activity;
    
    private final int fragmentId;
@@ -49,22 +52,26 @@ public abstract class NavigationHandlerBase implements INavigationHandler
    
    
    
-   @Override
-   public void onActionModeStarted( ActionMode mode )
-   {
-   }
-   
-   
-   
-   @Override
-   public void onActionModeFinished( ActionMode mode )
-   {
-   }
-   
-   
-   
    public int getFragmentId()
    {
       return fragmentId;
+   }
+   
+   
+   
+   public final < T > void registerAnnotatedConfiguredInstance( T instance,
+                                                                Class< T > clazz )
+   {
+      annotatedConfigurationSupport.registerInstance( instance, clazz );
+   }
+   
+   
+   
+   public void configureFromIntent( Intent intent )
+   {
+      if ( intent.getExtras() != null )
+      {
+         annotatedConfigurationSupport.setInstanceStates( intent.getExtras() );
+      }
    }
 }

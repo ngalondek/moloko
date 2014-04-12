@@ -20,7 +20,7 @@
  * Ronny Röhricht - implementation
  */
 
-package dev.drsoran.moloko.app.taskslist.common;
+package dev.drsoran.moloko.app.taskslist;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -33,7 +33,7 @@ import android.content.DialogInterface;
 import android.content.DialogInterface.OnMultiChoiceClickListener;
 import android.os.Bundle;
 import dev.drsoran.moloko.R;
-import dev.drsoran.moloko.app.taskslist.common.IShowTasksWithTagsListener.LogicalOperation;
+import dev.drsoran.moloko.app.taskslist.IShowTasksWithTagsListener.LogicalOperation;
 import dev.drsoran.moloko.state.InstanceState;
 import dev.drsoran.moloko.ui.UiUtils;
 import dev.drsoran.moloko.ui.fragments.MolokoDialogFragment;

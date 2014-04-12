@@ -20,7 +20,7 @@
  * Ronny Röhricht - implementation
  */
 
-package dev.drsoran.moloko.app.taskslist.common;
+package dev.drsoran.moloko.app.taskslist;
 
 import java.util.List;
 
@@ -32,7 +32,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.app.Intents;
-import dev.drsoran.moloko.app.taskslist.common.TasksListNavigationAdapter.IItem;
+import dev.drsoran.moloko.app.taskslist.TasksListNavigationAdapter.IItem;
 import dev.drsoran.moloko.domain.model.TasksList;
 import dev.drsoran.moloko.ui.adapters.SwappableArrayAdapter;
 

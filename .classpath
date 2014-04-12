@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry excluding="dev/drsoran/moloko/app/notification/**|dev/drsoran/moloko/app/search/TaskSearchResultActivity.java|dev/drsoran/moloko/app/taskslist/common/AbstractFullDetailedTasksListActivity.java" kind="src" path="src"/>
+	<classpathentry excluding="dev/drsoran/moloko/app/notification/**|dev/drsoran/moloko/app/search/TaskSearchResultActivity.java|dev/drsoran/moloko/app/taskslist/AbstractFullDetailedTasksListActivity.java" kind="src" path="src"/>
 	<classpathentry kind="src" path="gen"/>
 	<classpathentry kind="src" path="aidl"/>
 	<classpathentry kind="con" path="com.android.ide.eclipse.adt.ANDROID_FRAMEWORK"/>

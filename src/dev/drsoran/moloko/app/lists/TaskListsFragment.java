@@ -154,7 +154,7 @@ public class TaskListsFragment extends MolokoExpandableListFragment< TasksList >
       final TasksList list = getList( ExpandableListView.getPackedPositionGroup( info.packedPosition ) );
       final String listName = list.getName();
       
-      if ( hasWritableAccess() && !list.isLocked() )
+      if ( isWritableAccess() && !list.isLocked() )
       {
          getActivity().getMenuInflater()
                       .inflate( R.menu.tasklists_group_context_rwd, menu );

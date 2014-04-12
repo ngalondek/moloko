@@ -20,7 +20,7 @@
  * Ronny Röhricht - implementation
  */
 
-package dev.drsoran.moloko.app.taskslist.common;
+package dev.drsoran.moloko.app.taskslist;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;

@@ -272,8 +272,8 @@ public class TaskActivity extends MolokoEditActivity implements
    public void onOpenContact( String fullname, String username )
    {
       final Intent intent = Intents.createShowTasksOfContactIntent( this,
-                                                             fullname,
-                                                             username );
+                                                                    fullname,
+                                                                    username );
       startActivity( intent );
    }
    

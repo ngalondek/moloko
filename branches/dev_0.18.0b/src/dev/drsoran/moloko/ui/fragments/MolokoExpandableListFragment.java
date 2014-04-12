@@ -115,7 +115,7 @@ public abstract class MolokoExpandableListFragment< D > extends ListFragment
    
    
    
-   public boolean hasWritableAccess()
+   public boolean isWritableAccess()
    {
       return accessImpl.hasWritableAccess();
    }

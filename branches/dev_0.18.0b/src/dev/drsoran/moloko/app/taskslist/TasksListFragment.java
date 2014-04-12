@@ -20,7 +20,7 @@
  * Ronny Röhricht - implementation
  */
 
-package dev.drsoran.moloko.app.taskslist.common;
+package dev.drsoran.moloko.app.taskslist;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -28,6 +28,7 @@ import java.util.Collections;
 import java.util.List;
 
 import android.app.Activity;
+import android.app.DialogFragment;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.content.Loader;
@@ -49,13 +50,16 @@ import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.app.AppContext;
 import dev.drsoran.moloko.app.Intents;
 import dev.drsoran.moloko.app.event.IOnSettingsChangedListener;
+import dev.drsoran.moloko.app.lists.AddRenameListDialogFragment;
 import dev.drsoran.moloko.app.loaders.TasksLoader;
 import dev.drsoran.moloko.app.settings.SettingConstants;
-import dev.drsoran.moloko.app.taskslist.common.IShowTasksWithTagsListener.LogicalOperation;
+import dev.drsoran.moloko.app.taskslist.IShowTasksWithTagsListener.LogicalOperation;
+import dev.drsoran.moloko.content.Constants;
 import dev.drsoran.moloko.domain.model.RtmSmartFilter;
 import dev.drsoran.moloko.domain.model.Task;
 import dev.drsoran.moloko.domain.services.TaskContentOptions;
 import dev.drsoran.moloko.state.InstanceState;
+import dev.drsoran.moloko.ui.UiUtils;
 import dev.drsoran.moloko.ui.actionmodes.BaseMultiChoiceModeListener;
 import dev.drsoran.moloko.ui.adapters.SwappableArrayAdapter;
 import dev.drsoran.moloko.ui.fragments.MolokoListFragment;
@@ -85,6 +89,17 @@ public class TasksListFragment extends MolokoListFragment< Task > implements
    private int tasksSort;
    
    private ActionMode activeActionMode;;
+   
+   
+   
+   public final static TasksListFragment newInstance( Bundle config )
+   {
+      final TasksListFragment fragment = new TasksListFragment();
+      
+      fragment.setArguments( config );
+      
+      return fragment;
+   }
    
    
    
@@ -119,7 +134,7 @@ public class TasksListFragment extends MolokoListFragment< Task > implements
    public void onViewCreated( View view, Bundle savedInstanceState )
    {
       super.onViewCreated( view, savedInstanceState );
-      if ( !hasWritableAccess() )
+      if ( !isWritableAccess() )
       {
          registerForContextMenu( getListView() );
       }
@@ -181,6 +196,16 @@ public class TasksListFragment extends MolokoListFragment< Task > implements
    public void onCreateOptionsMenu( Menu menu, MenuInflater inflater )
    {
       inflater.inflate( R.menu.tasks_sort, menu );
+      
+      if ( isWritableAccess() )
+      {
+         inflater.inflate( R.menu.taskslist_activity_rwd, menu );
+      }
+      else
+      {
+         inflater.inflate( R.menu.taskslist_activity, menu );
+      }
+      
       super.onCreateOptionsMenu( menu, inflater );
    }
    
@@ -204,6 +229,65 @@ public class TasksListFragment extends MolokoListFragment< Task > implements
             sortMenuItem.setVisible( false );
          }
       }
+      
+      if ( isWritableAccess() )
+      {
+         final MenuItem addSmartListItem = menu.findItem( R.id.menu_add_list );
+         prepareAddSmartListMenuVisibility( addSmartListItem );
+      }
+      
+      final MenuItem toggleDefaultListItem = menu.findItem( R.id.menu_toggle_default_list );
+      prepareToggleDefaultListMenu( toggleDefaultListItem );
+   }
+   
+   
+   
+   private void prepareAddSmartListMenuVisibility( MenuItem addSmartListItem )
+   {
+      boolean show = filter != null;
+      
+      // the active, selected item is an already existing list, then we
+      // don't need to add a new list.
+      show = show && listId != Constants.NO_ID;
+      
+      if ( show )
+      {
+         try
+         {
+            final Collection< RtmSmartFilterToken > unAmbigiousTokens = getAppContext().getParsingService()
+                                                                                       .getSmartFilterParsing()
+                                                                                       .getSmartFilterTokens( filter.getFilterString() )
+                                                                                       .getUniqueTokens();
+            show = unAmbigiousTokens.size() > 0;
+         }
+         catch ( GrammarException e )
+         {
+            show = false;
+         }
+      }
+      
+      addSmartListItem.setVisible( show );
+   }
+   
+   
+   
+   private void prepareToggleDefaultListMenu( MenuItem toggleDefaultListItem )
+   {
+      toggleDefaultListItem.setVisible( listId != Constants.NO_ID );
+      
+      if ( toggleDefaultListItem.isVisible() )
+      {
+         if ( isDefaultList() )
+         {
+            toggleDefaultListItem.setTitle( R.string.tasklists_menu_ctx_remove_def_list );
+            toggleDefaultListItem.setIcon( R.drawable.ic_menu_flag_unset );
+         }
+         else
+         {
+            toggleDefaultListItem.setTitle( R.string.tasklists_menu_ctx_make_def_list );
+            toggleDefaultListItem.setIcon( R.drawable.ic_menu_flag );
+         }
+      }
    }
    
    
@@ -215,6 +299,21 @@ public class TasksListFragment extends MolokoListFragment< Task > implements
       {
          case R.id.menu_quick_add_task:
             showQuickAddTaskInput();
+            return true;
+            
+         case R.id.menu_add_list:
+            showAddListDialog();
+            return true;
+            
+         case R.id.menu_toggle_default_list:
+            if ( isDefaultList() )
+            {
+               resetDefaultList();
+            }
+            else
+            {
+               setAsDefaultList();
+            }
             return true;
             
          case R.id.menu_sort_priority:
@@ -238,6 +337,19 @@ public class TasksListFragment extends MolokoListFragment< Task > implements
          default :
             return super.onOptionsItemSelected( item );
       }
+   }
+   
+   
+   
+   private void showAddListDialog()
+   {
+      final Bundle config = new Bundle();
+      config.putSerializable( Intents.Extras.KEY_FILTER, filter );
+      
+      final DialogFragment dialogFragment = AddRenameListDialogFragment.newInstance( config );
+      UiUtils.showDialogFragment( getActivity(),
+                                  dialogFragment,
+                                  String.valueOf( R.id.frag_add_rename_list ) );
    }
    
    
@@ -596,7 +708,7 @@ public class TasksListFragment extends MolokoListFragment< Task > implements
       else
       {
          loader = new TasksLoader( getAppContext().asDomainContext(),
-                                   config.getLong( Intents.Extras.KEY_LIST_ID ),
+                                   listId,
                                    TaskContentOptions.WithNotes );
       }
       
@@ -694,8 +806,8 @@ public class TasksListFragment extends MolokoListFragment< Task > implements
    @Override
    public int getChoiceMode()
    {
-      return hasWritableAccess() ? ListView.CHOICE_MODE_MULTIPLE_MODAL
-                                : ListView.CHOICE_MODE_NONE;
+      return isWritableAccess() ? ListView.CHOICE_MODE_MULTIPLE_MODAL
+                               : ListView.CHOICE_MODE_NONE;
    }
    
    
@@ -792,6 +904,29 @@ public class TasksListFragment extends MolokoListFragment< Task > implements
       getAppContext().getContentEditService()
                      .deleteTasks( getActivity(), tasks );
       clearListChoices();
+   }
+   
+   
+   
+   private boolean isDefaultList()
+   {
+      final long defListId = getAppContext().getSettings().getDefaultListId();
+      return listId != Constants.NO_ID && listId == defListId;
+   }
+   
+   
+   
+   private void setAsDefaultList()
+   {
+      getAppContext().getSettings().setDefaultListId( listId );
+   }
+   
+   
+   
+   private void resetDefaultList()
+   {
+      getAppContext().getSettings()
+                     .setDefaultListId( SettingConstants.NO_DEFAULT_LIST_ID );
    }
    
    

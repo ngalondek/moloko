@@ -23,7 +23,6 @@
 package dev.drsoran.moloko.app.home;
 
 import android.content.Intent;
-import android.view.ActionMode;
 
 
 public interface INavigationHandler
@@ -33,12 +32,4 @@ public interface INavigationHandler
    
    
    void setActivityTitle();
-   
-   
-   
-   void onActionModeStarted( ActionMode mode );
-   
-   
-   
-   void onActionModeFinished( ActionMode mode );
 }

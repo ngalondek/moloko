@@ -20,7 +20,7 @@
  * Ronny Röhricht - implementation
  */
 
-package dev.drsoran.moloko.app.taskslist.common;
+package dev.drsoran.moloko.app.taskslist;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,7 +43,7 @@ import dev.drsoran.moloko.app.baseactivities.MolokoActivity;
 import dev.drsoran.moloko.app.home.NavigationHandlerBase;
 import dev.drsoran.moloko.app.loaders.TasksListLoader;
 import dev.drsoran.moloko.app.loaders.TasksListsLoader;
-import dev.drsoran.moloko.app.taskslist.common.TasksListNavigationAdapter.IItem;
+import dev.drsoran.moloko.app.taskslist.TasksListNavigationAdapter.IItem;
 import dev.drsoran.moloko.content.Constants;
 import dev.drsoran.moloko.content.ContentUris;
 import dev.drsoran.moloko.domain.model.ExtendedTaskCount;
@@ -53,8 +53,8 @@ import dev.drsoran.moloko.state.InstanceState;
 import dev.drsoran.rtm.parsing.grammar.rtmsmart.RtmSmartFilterBuilder;
 
 
-abstract class AbstractTasksListNavigationHandler extends NavigationHandlerBase
-         implements OnNavigationListener, LoaderCallbacks< TasksList >
+public class TasksListNavigationHandler extends NavigationHandlerBase implements
+         OnNavigationListener, LoaderCallbacks< TasksList >
 {
    @InstanceState( key = "sel_nav_item",
                    defaultValue = InstanceState.NO_DEFAULT )
@@ -68,12 +68,11 @@ abstract class AbstractTasksListNavigationHandler extends NavigationHandlerBase
    
    
    
-   protected AbstractTasksListNavigationHandler( MolokoActivity activity,
-      int fragmentId )
+   public TasksListNavigationHandler( MolokoActivity activity, int fragmentId )
    {
       super( activity, fragmentId );
-      activity.registerAnnotatedConfiguredInstance( this,
-                                                    AbstractTasksListNavigationHandler.class );
+      registerAnnotatedConfiguredInstance( this,
+                                           TasksListNavigationHandler.class );
    }
    
    
@@ -81,6 +80,8 @@ abstract class AbstractTasksListNavigationHandler extends NavigationHandlerBase
    @Override
    public final void handleIntent( Intent intent )
    {
+      configureFromIntent( intent );
+      
       final Fragment fragment = createTasksListFragment( intent.getExtras() );
       getActivity().showFragment( getFragmentId(), fragment );
       
@@ -205,7 +206,12 @@ abstract class AbstractTasksListNavigationHandler extends NavigationHandlerBase
    
    private long getListIdFromIntent()
    {
-      long listId = getListIdFromIntentExtras();
+      long listId = tasksList != null ? tasksList.getId() : Constants.NO_ID;
+      
+      if ( listId == Constants.NO_ID )
+      {
+         listId = getListIdFromIntentExtras();
+      }
       if ( listId == Constants.NO_ID )
       {
          listId = getListIdFromIntentUri();
@@ -544,22 +550,10 @@ abstract class AbstractTasksListNavigationHandler extends NavigationHandlerBase
    
    
    
-   protected abstract Fragment createTasksListFragment( Bundle extras );
-   
-   
-   
-   @Deprecated
-   protected ITasksListFragment getTasksListFragment()
+   private Fragment createTasksListFragment( Bundle extras )
    {
-      final Fragment fragment = getActivity().findAddedFragmentById( R.id.frag_taskslist );
-      
-      if ( fragment instanceof ITasksListFragment )
-      {
-         final ITasksListFragment tasksListFragment = (ITasksListFragment) fragment;
-         return tasksListFragment;
-      }
-      
-      return null;
+      extras.putLong( Intents.Extras.KEY_LIST_ID, getListIdFromIntent() );
+      return TasksListFragment.newInstance( extras );
    }
    
    

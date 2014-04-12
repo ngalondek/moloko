@@ -31,7 +31,6 @@ import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
-import android.view.ActionMode;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -41,10 +40,6 @@ import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.app.Intents;
 import dev.drsoran.moloko.app.Intents.HomeAction;
 import dev.drsoran.moloko.app.baseactivities.MolokoActivity;
-import dev.drsoran.moloko.app.contactslist.ContactsListNavigationHandler;
-import dev.drsoran.moloko.app.tagcloud.TagCloudNavigationHandler;
-import dev.drsoran.moloko.content.ContentUris;
-import dev.drsoran.moloko.content.UriLookup;
 import dev.drsoran.moloko.event.IOnTimeChangedListener;
 
 
@@ -57,8 +52,6 @@ public class HomeActivity extends MolokoActivity implements
    
    private ExpandableListView drawerList;
    
-   private final UriLookup< INavigationHandler > navigationHandlers = new UriLookup< INavigationHandler >( ContentUris.MATCHER );
-   
    private INavigationHandler activeNavigationHandler;
    
    
@@ -66,24 +59,10 @@ public class HomeActivity extends MolokoActivity implements
    @Override
    public void onCreate( Bundle savedInstanceState )
    {
-      setupNavigationHandlers();
-      
       super.onCreate( savedInstanceState );
       
       setContentView( R.layout.home_activity );
       initializeDrawer();
-   }
-   
-   
-   
-   private void setupNavigationHandlers()
-   {
-      navigationHandlers.put( new TagCloudNavigationHandler( this,
-                                                             android.R.id.widget_frame ),
-                              ContentUris.MATCH_TAGS );
-      navigationHandlers.put( new ContactsListNavigationHandler( this,
-                                                                 android.R.id.widget_frame ),
-                              ContentUris.MATCH_CONTACTS );
    }
    
    
@@ -121,7 +100,8 @@ public class HomeActivity extends MolokoActivity implements
    {
       if ( intent.getData() != null )
       {
-         activeNavigationHandler = navigationHandlers.get( intent.getData() );
+         activeNavigationHandler = NavigationHandlerFractory.create( this,
+                                                                     intent.getData() );
          navigate( intent );
       }
       else
@@ -143,24 +123,6 @@ public class HomeActivity extends MolokoActivity implements
          Log().e( getClass(),
                   MessageFormat.format( "Unhandled Intent {0}", intent ) );
       }
-   }
-   
-   
-   
-   @Override
-   public void onActionModeStarted( ActionMode mode )
-   {
-      super.onActionModeStarted( mode );
-      activeNavigationHandler.onActionModeStarted( mode );
-   }
-   
-   
-   
-   @Override
-   public void onActionModeFinished( ActionMode mode )
-   {
-      activeNavigationHandler.onActionModeFinished( mode );
-      super.onActionModeFinished( mode );
    }
    
    

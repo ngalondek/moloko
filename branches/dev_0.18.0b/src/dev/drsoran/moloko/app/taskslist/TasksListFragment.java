@@ -107,6 +107,7 @@ public class TasksListFragment extends MolokoListFragment< Task > implements
    {
       registerAnnotatedConfiguredInstance( this, TasksListFragment.class );
       setNoElementsResourceId( R.string.abstaskslist_no_tasks );
+      setHasOptionsMenu( true );
    }
    
    
@@ -199,11 +200,11 @@ public class TasksListFragment extends MolokoListFragment< Task > implements
       
       if ( isWritableAccess() )
       {
-         inflater.inflate( R.menu.taskslist_activity_rwd, menu );
+         inflater.inflate( R.menu.taskslist_fragment_rwd, menu );
       }
       else
       {
-         inflater.inflate( R.menu.taskslist_activity, menu );
+         inflater.inflate( R.menu.taskslist_fragment, menu );
       }
       
       super.onCreateOptionsMenu( menu, inflater );
@@ -233,11 +234,17 @@ public class TasksListFragment extends MolokoListFragment< Task > implements
       if ( isWritableAccess() )
       {
          final MenuItem addSmartListItem = menu.findItem( R.id.menu_add_list );
-         prepareAddSmartListMenuVisibility( addSmartListItem );
+         if ( addSmartListItem != null )
+         {
+            prepareAddSmartListMenuVisibility( addSmartListItem );
+         }
       }
       
       final MenuItem toggleDefaultListItem = menu.findItem( R.id.menu_toggle_default_list );
-      prepareToggleDefaultListMenu( toggleDefaultListItem );
+      if ( toggleDefaultListItem != null )
+      {
+         prepareToggleDefaultListMenu( toggleDefaultListItem );
+      }
    }
    
    
@@ -280,12 +287,10 @@ public class TasksListFragment extends MolokoListFragment< Task > implements
          if ( isDefaultList() )
          {
             toggleDefaultListItem.setTitle( R.string.tasklists_menu_ctx_remove_def_list );
-            toggleDefaultListItem.setIcon( R.drawable.ic_menu_flag_unset );
          }
          else
          {
             toggleDefaultListItem.setTitle( R.string.tasklists_menu_ctx_make_def_list );
-            toggleDefaultListItem.setIcon( R.drawable.ic_menu_flag );
          }
       }
    }
@@ -698,7 +703,6 @@ public class TasksListFragment extends MolokoListFragment< Task > implements
    {
       final TasksLoader loader;
       
-      final RtmSmartFilter filter = (RtmSmartFilter) config.getSerializable( Intents.Extras.KEY_FILTER );
       if ( filter != null )
       {
          loader = new TasksLoader( getAppContext().asDomainContext(),

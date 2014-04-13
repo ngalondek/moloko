@@ -34,8 +34,9 @@ import android.support.v4.widget.DrawerLayout;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ExpandableListView;
-import android.widget.ExpandableListView.OnGroupClickListener;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
+import android.widget.ListView;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.app.Intents;
 import dev.drsoran.moloko.app.Intents.HomeAction;
@@ -44,15 +45,15 @@ import dev.drsoran.moloko.event.IOnTimeChangedListener;
 
 
 public class HomeActivity extends MolokoActivity implements
-         IOnTimeChangedListener, OnGroupClickListener
+         IOnTimeChangedListener, OnItemClickListener
 {
    private ActionBarDrawerToggle drawerToggle;
    
    private DrawerLayout drawerLayout;
    
-   private ExpandableListView drawerList;
+   private ListView drawerList;
    
-   private INavigationHandler activeNavigationHandler;
+   private INavigationDrawerHandler activeNavigationHandler;
    
    
    
@@ -90,6 +91,7 @@ public class HomeActivity extends MolokoActivity implements
    {
       super.onNewIntent( intent );
       
+      closeDrawer();
       selectNavigationHandler( intent );
       navigate( intent );
    }
@@ -100,9 +102,8 @@ public class HomeActivity extends MolokoActivity implements
    {
       if ( intent.getData() != null )
       {
-         activeNavigationHandler = NavigationHandlerFractory.create( this,
-                                                                     intent.getData() );
-         navigate( intent );
+         activeNavigationHandler = NavigationDrawerHandlerFractory.create( this,
+                                                                           intent.getData() );
       }
       else
       {
@@ -132,9 +133,9 @@ public class HomeActivity extends MolokoActivity implements
       drawerLayout = (DrawerLayout) findViewById( R.id.drawer_layout );
       drawerLayout.setDrawerShadow( R.drawable.drawer_shadow,
                                     GravityCompat.START );
-      drawerList = (ExpandableListView) drawerLayout.findViewById( R.id.left_drawer );
+      drawerList = (ListView) drawerLayout.findViewById( R.id.left_drawer );
       
-      drawerList.setOnGroupClickListener( this );
+      drawerList.setOnItemClickListener( this );
       
       drawerToggle = new ActionBarDrawerToggle( this,
                                                 drawerLayout,
@@ -169,6 +170,8 @@ public class HomeActivity extends MolokoActivity implements
       super.onStart();
       
       selectNavigationHandler( getIntent() );
+      navigate( getIntent() );
+      
       registerListeners();
       setHomeAdapter();
    }
@@ -195,7 +198,7 @@ public class HomeActivity extends MolokoActivity implements
    
    private AbstractHomeNavAdapter getAdapter()
    {
-      return (AbstractHomeNavAdapter) drawerList.getExpandableListAdapter();
+      return (AbstractHomeNavAdapter) drawerList.getAdapter();
    }
    
    
@@ -311,22 +314,28 @@ public class HomeActivity extends MolokoActivity implements
    
    
    @Override
-   public boolean onGroupClick( ExpandableListView parent,
-                                View v,
-                                int groupPosition,
-                                long id )
+   public void onItemClick( AdapterView< ? > parent,
+                            View view,
+                            int position,
+                            long id )
    {
       final AbstractHomeNavAdapter adapter = getAdapter();
       
-      final Intent intent = adapter.getIntentForWidget( groupPosition );
+      final Intent intent = adapter.getIntentForWidget( position );
       if ( intent != null )
       {
          startActivityWithHomeAction( intent, HomeAction.HOME );
-         drawerLayout.closeDrawer( drawerList );
-         drawerList.setItemChecked( groupPosition, true );
+         closeDrawer();
+         
+         drawerList.setItemChecked( position, true );
       }
-      
-      return true;
+   }
+   
+   
+   
+   private void closeDrawer()
+   {
+      drawerLayout.closeDrawer( drawerList );
    }
    
    
@@ -366,7 +375,7 @@ public class HomeActivity extends MolokoActivity implements
    {
       if ( activeNavigationHandler != null )
       {
-         activeNavigationHandler.setActivityTitle();
+         activeNavigationHandler.onNavigationDrawerClosed();
       }
       else
       {
@@ -379,6 +388,11 @@ public class HomeActivity extends MolokoActivity implements
    
    private void setDrawerOpenedTitle()
    {
+      if ( activeNavigationHandler != null )
+      {
+         activeNavigationHandler.onNavigationDrawerOpened();
+      }
+      
       setTitle( R.string.app_name );
       getActionBar().setSubtitle( null );
    }

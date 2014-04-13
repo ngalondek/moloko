@@ -51,6 +51,7 @@ import dev.drsoran.moloko.domain.model.TasksList;
 import dev.drsoran.moloko.sync.SyncAlarmReceiver;
 import dev.drsoran.moloko.sync.SyncConstants;
 import dev.drsoran.moloko.util.Bundles;
+import dev.drsoran.rtm.Strings;
 import dev.drsoran.rtm.parsing.grammar.rtmsmart.RtmSmartFilterBuilder;
 
 
@@ -215,16 +216,12 @@ public final class Intents
       public final static Bundle createOpenListExtras( TasksList list,
                                                        String additionalSmartFilter )
       {
+         final Bundle extras = new Bundle();
+         extras.putSerializable( Intents.Extras.KEY_LIST, list );
+         
          final RtmSmartFilterBuilder smartFilterBuilder = new RtmSmartFilterBuilder();
          
-         // If we open a non-smart list
-         if ( !list.isSmartList() )
-         {
-            smartFilterBuilder.list( list.getName() );
-         }
-         
-         // if we open a smart list
-         else
+         if ( list.isSmartList() )
          {
             smartFilterBuilder.filterString( list.getSmartFilter()
                                                  .getFilterString() );
@@ -232,14 +229,27 @@ public final class Intents
          
          if ( additionalSmartFilter != null )
          {
-            smartFilterBuilder.and()
-                              .lParenth()
-                              .filterString( additionalSmartFilter )
-                              .rParenth();
+            // If we open a non-smart list
+            if ( !list.isSmartList() )
+            {
+               smartFilterBuilder.list( list.getName() );
+            }
+            
+            if ( additionalSmartFilter != null )
+            {
+               smartFilterBuilder.and()
+                                 .lParenth()
+                                 .filterString( additionalSmartFilter )
+                                 .rParenth();
+            }
          }
          
-         final Bundle extras = new Bundle( 1 );
-         extras.putSerializable( Intents.Extras.KEY_LIST, list );
+         final String filterString = smartFilterBuilder.toString();
+         if ( !Strings.isEmptyOrWhitespace( filterString ) )
+         {
+            extras.putSerializable( Intents.Extras.KEY_FILTER,
+                                    new RtmSmartFilter( filterString ) );
+         }
          
          return extras;
       }

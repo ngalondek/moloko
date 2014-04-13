@@ -72,6 +72,7 @@ public class TagCloudFragment extends MolokoLoaderFragment< List< CloudEntry > >
       final TagCloudFragment fragment = new TagCloudFragment();
       
       fragment.setArguments( config );
+      fragment.setHasOptionsMenu( false );
       
       return fragment;
    }

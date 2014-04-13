@@ -24,31 +24,31 @@ package dev.drsoran.moloko.app.home;
 
 import android.net.Uri;
 import dev.drsoran.moloko.app.baseactivities.MolokoActivity;
-import dev.drsoran.moloko.app.contactslist.ContactsListNavigationHandler;
-import dev.drsoran.moloko.app.tagcloud.TagCloudNavigationHandler;
-import dev.drsoran.moloko.app.taskslist.TasksListNavigationHandler;
+import dev.drsoran.moloko.app.contactslist.ContactsListNavigationDrawerHandler;
+import dev.drsoran.moloko.app.tagcloud.TagCloudNavigationDrawerHandler;
+import dev.drsoran.moloko.app.taskslist.TasksListNavigationDrawerHandler;
 import dev.drsoran.moloko.content.ContentUris;
 
 
-class NavigationHandlerFractory
+class NavigationDrawerHandlerFractory
 {
-   public static INavigationHandler create( MolokoActivity activity,
-                                            Uri intentUri )
+   public static INavigationDrawerHandler create( MolokoActivity activity,
+                                                  Uri intentUri )
    {
       switch ( ContentUris.MATCHER.match( intentUri ) )
       {
          case ContentUris.MATCH_TASKS:
          case ContentUris.MATCH_TASKS_LISTS_ID:
-            return new TasksListNavigationHandler( activity,
-                                                   android.R.id.widget_frame );
+            return new TasksListNavigationDrawerHandler( activity,
+                                                         android.R.id.widget_frame );
             
          case ContentUris.MATCH_TAGS:
-            return new TagCloudNavigationHandler( activity,
-                                                  android.R.id.widget_frame );
+            return new TagCloudNavigationDrawerHandler( activity,
+                                                        android.R.id.widget_frame );
             
          case ContentUris.MATCH_CONTACTS:
-            return new ContactsListNavigationHandler( activity,
-                                                      android.R.id.widget_frame );
+            return new ContactsListNavigationDrawerHandler( activity,
+                                                            android.R.id.widget_frame );
             
          default :
             return null;

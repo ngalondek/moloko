@@ -58,6 +58,7 @@ public class ContactsListFragment extends MolokoListFragment< LinkedContact >
    public ContactsListFragment()
    {
       setNoElementsResourceId( R.string.contactslist_no_contacts );
+      setHasOptionsMenu( false );
    }
    
    

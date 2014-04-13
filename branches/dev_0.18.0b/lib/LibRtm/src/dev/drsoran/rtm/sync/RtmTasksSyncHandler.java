@@ -101,10 +101,44 @@ public class RtmTasksSyncHandler implements IRtmSyncHandler
          return RtmSyncResult.newFailed( e );
       }
       
-      final List< RtmTask > syncPartnerTasks = syncPartner.getTasks( lastInSyncMillisUtc );
+      if ( lastInSyncMillisUtc == RtmConstants.NO_TIME )
+      {
+         return handleFullIncomingSync( rtmTasks );
+      }
       
+      return handleIncrementalIncomingSync( rtmTasks );
+   }
+   
+   
+   
+   private RtmSyncResult handleFullIncomingSync( List< RtmTask > rtmTasks )
+   {
+      final List< RtmTask > syncPartnerTasks = syncPartner.getTasks( RtmConstants.NO_TIME );
       sortLists( syncPartnerTasks, rtmTasks );
       
+      diffIncoming( rtmTasks, syncPartnerTasks );
+      
+      return RtmSyncResult.newSucceeded();
+   }
+   
+   
+   
+   private RtmSyncResult handleIncrementalIncomingSync( List< RtmTask > rtmTasks )
+   {
+      for ( RtmTask rtmTask : rtmTasks )
+      {
+         final RtmTask syncPartnerTask = syncPartner.getTask( rtmTask.getId() );
+         diffIncoming( rtmTask, syncPartnerTask );
+      }
+      
+      return RtmSyncResult.newSucceeded();
+   }
+   
+   
+   
+   private void diffIncoming( List< RtmTask > rtmTasks,
+                              List< RtmTask > syncPartnerTasks )
+   {
       for ( RtmTask rtmTask : rtmTasks )
       {
          final int posPartnerList = Collections.binarySearch( syncPartnerTasks,
@@ -116,32 +150,37 @@ public class RtmTasksSyncHandler implements IRtmSyncHandler
             syncPartnerTask = syncPartnerTasks.get( posPartnerList );
          }
          
-         // Check if the RTM element is not deleted
-         if ( rtmTask.getDeletedMillisUtc() == RtmConstants.NO_TIME )
+         diffIncoming( rtmTask, syncPartnerTask );
+      }
+   }
+   
+   
+   
+   private void diffIncoming( RtmTask rtmTask, RtmTask syncPartnerTask )
+   {
+      // Check if the RTM element is not deleted
+      if ( rtmTask.getDeletedMillisUtc() == RtmConstants.NO_TIME )
+      {
+         // INSERT: The RTM element is not contained in the partner list.
+         if ( syncPartnerTask == null )
          {
-            // INSERT: The RTM element is not contained in the partner list.
-            if ( syncPartnerTask == null )
-            {
-               syncPartner.insertTask( rtmTask );
-            }
-            
-            // UPDATE: The RTM element is contained in the partner list.
-            else
-            {
-               syncPartner.updateTask( syncPartnerTask, rtmTask );
-            }
+            syncPartner.insertTask( rtmTask );
          }
+         
+         // UPDATE: The RTM element is contained in the partner list.
          else
          {
-            // DELETE: The RTM element is contained in the partner list and is deleted at RTM side.
-            if ( syncPartnerTask != null )
-            {
-               syncPartner.deleteTask( syncPartnerTask );
-            }
+            syncPartner.updateTask( syncPartnerTask, rtmTask );
          }
       }
-      
-      return RtmSyncResult.newSucceeded();
+      else
+      {
+         // DELETE: The RTM element is contained in the partner list and is deleted at RTM side.
+         if ( syncPartnerTask != null )
+         {
+            syncPartner.deleteTask( syncPartnerTask );
+         }
+      }
    }
    
    

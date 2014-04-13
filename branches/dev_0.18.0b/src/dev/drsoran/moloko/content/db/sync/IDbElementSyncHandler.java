@@ -31,6 +31,10 @@ public interface IDbElementSyncHandler< T >
    
    
    
+   T getElement( String id );
+   
+   
+   
    void insert( T element );
    
    

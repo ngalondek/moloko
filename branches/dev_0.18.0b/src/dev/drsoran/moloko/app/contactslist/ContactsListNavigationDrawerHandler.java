@@ -20,19 +20,22 @@
  * Ronny Röhricht - implementation
  */
 
-package dev.drsoran.moloko.app.tagcloud;
+package dev.drsoran.moloko.app.contactslist;
 
+import android.app.ActionBar;
 import android.content.Intent;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.app.baseactivities.MolokoActivity;
-import dev.drsoran.moloko.app.home.NavigationHandlerBase;
+import dev.drsoran.moloko.app.home.NavigationDrawerHandlerBase;
 
 
-public class TagCloudNavigationHandler extends NavigationHandlerBase
+public class ContactsListNavigationDrawerHandler extends
+         NavigationDrawerHandlerBase
 {
-   public TagCloudNavigationHandler( MolokoActivity context, int fragmentId )
+   public ContactsListNavigationDrawerHandler( MolokoActivity activity,
+      int fragmentId )
    {
-      super( context, fragmentId );
+      super( activity, fragmentId );
    }
    
    
@@ -40,16 +43,26 @@ public class TagCloudNavigationHandler extends NavigationHandlerBase
    @Override
    public void handleIntent( Intent intent )
    {
-      final TagCloudFragment fragment = TagCloudFragment.newInstance( intent.getExtras() );
+      final ContactsListFragment fragment = ContactsListFragment.newInstance( intent.getExtras() );
+      
       getActivity().showFragment( getFragmentId(), fragment );
+      getActivity().getActionBar()
+                   .setNavigationMode( ActionBar.NAVIGATION_MODE_STANDARD );
    }
    
    
    
    @Override
-   public void setActivityTitle()
+   public void onNavigationDrawerOpened()
    {
-      getActivity().setTitle( R.string.app_tagcloud );
+   }
+   
+   
+   
+   @Override
+   public void onNavigationDrawerClosed()
+   {
+      getActivity().setTitle( R.string.app_contacts );
       getActivity().getActionBar().setSubtitle( null );
    }
 }

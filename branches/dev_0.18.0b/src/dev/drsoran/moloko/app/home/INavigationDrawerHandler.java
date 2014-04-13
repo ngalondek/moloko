@@ -25,11 +25,15 @@ package dev.drsoran.moloko.app.home;
 import android.content.Intent;
 
 
-public interface INavigationHandler
+public interface INavigationDrawerHandler
 {
    void handleIntent( Intent intent );
    
    
    
-   void setActivityTitle();
+   void onNavigationDrawerOpened();
+   
+   
+   
+   void onNavigationDrawerClosed();
 }

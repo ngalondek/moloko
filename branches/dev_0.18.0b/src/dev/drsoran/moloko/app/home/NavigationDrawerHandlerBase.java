@@ -22,12 +22,14 @@
 
 package dev.drsoran.moloko.app.home;
 
+import android.app.Fragment;
 import android.content.Intent;
 import dev.drsoran.moloko.app.baseactivities.MolokoActivity;
 import dev.drsoran.moloko.state.AnnotatedConfigurationSupport;
 
 
-public abstract class NavigationHandlerBase implements INavigationHandler
+public abstract class NavigationDrawerHandlerBase implements
+         INavigationDrawerHandler
 {
    private final AnnotatedConfigurationSupport annotatedConfigurationSupport = new AnnotatedConfigurationSupport();
    
@@ -37,7 +39,8 @@ public abstract class NavigationHandlerBase implements INavigationHandler
    
    
    
-   protected NavigationHandlerBase( MolokoActivity activity, int fragmentId )
+   protected NavigationDrawerHandlerBase( MolokoActivity activity,
+      int fragmentId )
    {
       this.activity = activity;
       this.fragmentId = fragmentId;
@@ -72,6 +75,28 @@ public abstract class NavigationHandlerBase implements INavigationHandler
       if ( intent.getExtras() != null )
       {
          annotatedConfigurationSupport.setInstanceStates( intent.getExtras() );
+      }
+   }
+   
+   
+   
+   public void disableFragmentOptionsMenu()
+   {
+      final Fragment fragment = getActivity().findAddedFragmentById( getFragmentId() );
+      if ( fragment != null )
+      {
+         fragment.setHasOptionsMenu( false );
+      }
+   }
+   
+   
+   
+   public void restoreFragmentOptionsMenu()
+   {
+      final Fragment fragment = getActivity().findAddedFragmentById( getFragmentId() );
+      if ( fragment != null )
+      {
+         fragment.setHasOptionsMenu( true );
       }
    }
 }

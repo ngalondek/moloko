@@ -47,10 +47,10 @@ public class SyncActionProvider extends ActionProvider
    
    
    
-   public SyncActionProvider( AppContext context )
+   public SyncActionProvider( Context context )
    {
       super( context );
-      this.context = context;
+      this.context = AppContext.get( context );
       
       final Context hostContext = context instanceof ContextWrapper
                                                                    ? ( (ContextWrapper) context ).getBaseContext()
@@ -64,7 +64,7 @@ public class SyncActionProvider extends ActionProvider
          host = null;
       }
       
-      this.syncService = context.getSyncService();
+      this.syncService = this.context.getSyncService();
    }
    
    

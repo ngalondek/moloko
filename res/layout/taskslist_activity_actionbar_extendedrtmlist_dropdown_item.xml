@@ -17,10 +17,7 @@
     style="?android:attr/spinnerDropDownItemStyle"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:paddingTop="5dip"
-    android:paddingBottom="5dip"    
-    android:paddingRight="5dip"
-    android:paddingLeft="32dip" >
+    android:padding="5dip">
 
     <TextView
         android:id="@android:id/text2"

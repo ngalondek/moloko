@@ -93,6 +93,17 @@ abstract class AbstractElementSyncHandler< T > implements
    
    
    @Override
+   public T getElement( String id )
+   {
+      return getElementImpl( id,
+                             getTableName(),
+                             getEqualIdClause(),
+                             getElementClass() );
+   }
+   
+   
+   
+   @Override
    public void insert( T element )
    {
       final ContentValues contentValues = contentValuesFactory.createContentValues( element );
@@ -217,6 +228,39 @@ abstract class AbstractElementSyncHandler< T > implements
          }
          
          return result;
+      }
+      finally
+      {
+         if ( c != null )
+         {
+            c.close();
+         }
+      }
+   }
+   
+   
+   
+   private T getElementImpl( String id,
+                             String tableName,
+                             String selection,
+                             Class< T > elementType )
+   {
+      final ITable table = getTable( tableName );
+      
+      Cursor c = null;
+      try
+      {
+         c = table.query( table.getProjection(), selection, new String[]
+         { id }, null );
+         
+         if ( c.moveToNext() )
+         {
+            final T element = modelElementFactory.createElementFromCursor( c,
+                                                                           elementType );
+            return element;
+         }
+         
+         return null;
       }
       finally
       {

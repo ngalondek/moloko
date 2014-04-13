@@ -26,6 +26,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 
+import android.content.Context;
 import dev.drsoran.moloko.app.MolokoApp;
 import dev.drsoran.rtm.ILog;
 
@@ -34,10 +35,13 @@ public class DefaultReaderFactory implements IReaderFactory
 {
    private final ILog log;
    
+   private final Context context;
    
    
-   public DefaultReaderFactory( ILog log )
+   
+   public DefaultReaderFactory( Context context, ILog log )
    {
+      this.context = context;
       this.log = log;
    }
    
@@ -51,7 +55,12 @@ public class DefaultReaderFactory implements IReaderFactory
       
       if ( MolokoApp.DEBUG() )
       {
-         reader = new LoggingReader( log, reader, HttpUrlConnection.class );
+         reader = new FileWritingReader( "ReaderLog.txt",
+                                         log,
+                                         context,
+                                         new LoggingReader( log,
+                                                            reader,
+                                                            HttpUrlConnection.class ) );
       }
       
       return reader;

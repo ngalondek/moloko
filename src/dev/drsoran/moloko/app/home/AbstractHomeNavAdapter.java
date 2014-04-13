@@ -28,10 +28,10 @@ import java.util.List;
 import android.content.Intent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseExpandableListAdapter;
+import android.widget.BaseAdapter;
 
 
-abstract class AbstractHomeNavAdapter extends BaseExpandableListAdapter
+abstract class AbstractHomeNavAdapter extends BaseAdapter
 {
    private List< INavWidget > widgets;
    
@@ -46,7 +46,7 @@ abstract class AbstractHomeNavAdapter extends BaseExpandableListAdapter
    
    
    @Override
-   public int getGroupCount()
+   public int getCount()
    {
       return widgets.size();
    }
@@ -54,41 +54,25 @@ abstract class AbstractHomeNavAdapter extends BaseExpandableListAdapter
    
    
    @Override
-   public int getChildrenCount( int groupPosition )
+   public Object getItem( int position )
    {
-      return 0;
+      return widgets.get( position );
    }
    
    
    
    @Override
-   public Object getGroup( int groupPosition )
+   public long getItemId( int position )
    {
-      return widgets.get( groupPosition );
+      return position;
    }
    
    
    
    @Override
-   public Object getChild( int groupPosition, int childPosition )
+   public View getView( int position, View convertView, ViewGroup parent )
    {
-      return null;
-   }
-   
-   
-   
-   @Override
-   public long getGroupId( int groupPosition )
-   {
-      return groupPosition;
-   }
-   
-   
-   
-   @Override
-   public long getChildId( int groupPosition, int childPosition )
-   {
-      return childPosition + 1;
+      return getWidget( position ).getView( convertView );
    }
    
    
@@ -102,32 +86,9 @@ abstract class AbstractHomeNavAdapter extends BaseExpandableListAdapter
    
    
    @Override
-   public View getGroupView( int groupPosition,
-                             boolean isExpanded,
-                             View convertView,
-                             ViewGroup parent )
+   public boolean isEnabled( int position )
    {
-      return getWidget( groupPosition ).getView( convertView );
-   }
-   
-   
-   
-   @Override
-   public View getChildView( int groupPosition,
-                             int childPosition,
-                             boolean isLastChild,
-                             View convertView,
-                             ViewGroup parent )
-   {
-      return null;
-   }
-   
-   
-   
-   @Override
-   public boolean isChildSelectable( int groupPosition, int childPosition )
-   {
-      return false;
+      return getWidget( position ).getIntent() != null;
    }
    
    
@@ -150,7 +111,7 @@ abstract class AbstractHomeNavAdapter extends BaseExpandableListAdapter
    
    public INavWidget getWidget( int position )
    {
-      return (INavWidget) getGroup( position );
+      return (INavWidget) getItem( position );
    }
    
    

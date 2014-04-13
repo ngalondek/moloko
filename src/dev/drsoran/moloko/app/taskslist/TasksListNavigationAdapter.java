@@ -300,10 +300,7 @@ class TasksListNavigationAdapter extends SwappableArrayAdapter< IItem >
             return R.layout.taskslist_activity_actionbar_listsection_dropdown_item;
          }
          // Normal list
-         else
-         {
-            return android.R.layout.simple_spinner_dropdown_item;
-         }
+         return android.R.layout.simple_spinner_dropdown_item;
       }
       
       
@@ -385,7 +382,7 @@ class TasksListNavigationAdapter extends SwappableArrayAdapter< IItem >
       @Override
       public int getSpinnerLayoutResourceId( int position )
       {
-         if ( position == ITEM_POSITION_DEFAULT_TASKS )
+         if ( position == ITEM_POSITION_INCOMPLETE_TASKS )
          {
             return android.R.layout.simple_spinner_dropdown_item;
          }
@@ -400,14 +397,7 @@ class TasksListNavigationAdapter extends SwappableArrayAdapter< IItem >
       @Override
       public int getDropdownLayoutResourceId( int position )
       {
-         if ( position == ITEM_POSITION_DEFAULT_TASKS )
-         {
-            return R.layout.taskslist_activity_actionbar_rtmlist_dropdown_item;
-         }
-         else
-         {
-            return R.layout.taskslist_activity_actionbar_extendedrtmlist_dropdown_item;
-         }
+         return R.layout.taskslist_activity_actionbar_extendedrtmlist_dropdown_item;
       }
       
       
@@ -419,7 +409,7 @@ class TasksListNavigationAdapter extends SwappableArrayAdapter< IItem >
       }
    }
    
-   public final static int ITEM_POSITION_DEFAULT_TASKS = 0;
+   public final static int ITEM_POSITION_INCOMPLETE_TASKS = 0;
    
    public final static int ITEM_POSITION_COMPLETED_TASKS = 1;
    

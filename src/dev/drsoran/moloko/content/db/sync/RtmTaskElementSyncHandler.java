@@ -49,8 +49,8 @@ import dev.drsoran.moloko.domain.content.IContentValuesFactory;
 import dev.drsoran.moloko.domain.content.IModelElementFactory;
 import dev.drsoran.moloko.domain.model.Participant;
 import dev.drsoran.rtm.ILog;
-import dev.drsoran.rtm.Strings;
 import dev.drsoran.rtm.Lambda.Func1;
+import dev.drsoran.rtm.Strings;
 import dev.drsoran.rtm.model.RtmConstants;
 import dev.drsoran.rtm.model.RtmContact;
 import dev.drsoran.rtm.model.RtmNote;
@@ -172,6 +172,14 @@ public class RtmTaskElementSyncHandler implements
    public List< RtmTask > getElementsModifiedSince( long modifiedSinceMsUtc )
    {
       return getElementsModifiedSinceImpl( modifiedSinceMsUtc );
+   }
+   
+   
+   
+   @Override
+   public RtmTask getElement( String taskId )
+   {
+      return getElementImpl( taskId );
    }
    
    
@@ -495,6 +503,61 @@ public class RtmTaskElementSyncHandler implements
          }
          
          return result;
+      }
+      finally
+      {
+         if ( c != null )
+         {
+            c.close();
+         }
+      }
+   }
+   
+   
+   
+   private RtmTask getElementImpl( String taskId )
+   {
+      Cursor c = null;
+      try
+      {
+         c = rtmDatabase.getTable( TableNames.RTM_RAW_TASKS_TABLE )
+                        .query( RtmRawTaskColumns.TABLE_PROJECTION,
+                                RtmRawTaskColumns.RTM_RAWTASK_ID + "=?",
+                                new String[]
+                                { taskId },
+                                null );
+         
+         if ( c.moveToNext() )
+         {
+            final RtmRawTask rawTask = rtmModelElementFactory.createElementFromCursor( c,
+                                                                                       RtmRawTask.class );
+            final long taskSeriesId = c.getLong( RtmRawTaskColumns.TASKSERIES_ID_IDX );
+            c.close();
+            
+            c = rtmDatabase.getTable( TableNames.RTM_TASK_SERIES_TABLE )
+                           .query( RtmTaskSeriesColumns.TABLE_PROJECTION,
+                                   RtmTaskSeriesColumns._ID + "=?",
+                                   new String[]
+                                   { String.valueOf( taskSeriesId ) },
+                                   null );
+            
+            if ( c.moveToNext() )
+            {
+               final RtmTaskSeries taskSeries = rtmModelElementFactory.createElementFromCursor( c,
+                                                                                                RtmTaskSeries.class );
+               addNotes( taskSeries, taskSeriesId );
+               
+               return new RtmTask( taskSeries, rawTask );
+            }
+            else
+            {
+               return null;
+            }
+         }
+         else
+         {
+            return null;
+         }
       }
       finally
       {

@@ -180,6 +180,14 @@ public class DbRtmSyncPartner implements IRtmSyncPartner
    
    
    @Override
+   public RtmTask getTask( String taskId )
+   {
+      return taskSyncHandler.getElement( taskId );
+   }
+   
+   
+   
+   @Override
    public List< IModification > getModificationsOfTask( RtmTask task )
    {
       return modificationsProvider.getModificationsOfRtmTask( task.getId() );

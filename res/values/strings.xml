@@ -324,6 +324,7 @@
    <string name="taskslist_actionbar_subtitle_due_tomorrow">Due tomorrow</string>
    <string name="taskslist_actionbar_subtitle_overdue">Overdue</string>
    <string name="taskslist_actionbar_subtitle_completed">Completed</string>
+   <string name="taskslist_actionbar_subtitle_incomplete">Incomplete</string>
       <!-- Menus -->
       <string name="select_multiple_tasks_menu_opt_do_edit">Edit %1$d</string>
       <string name="select_multiple_tasks_menu_opt_complete">Complete %1$d</string>

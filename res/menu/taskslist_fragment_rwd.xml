@@ -20,21 +20,10 @@
         android:showAsAction="always|withText"
         android:title="@string/app_task_add"/>
     <item
-        android:id="@id/menu_search_tasks"
-        android:icon="@drawable/ic_menu_search"
-        android:showAsAction="ifRoom"
-        android:title="@string/search_hint"/>
-    <item
         android:id="@id/menu_add_list"
         android:icon="@drawable/ic_menu_add_list"
         android:showAsAction="ifRoom"
-        android:title="@string/tasksearchresult_menu_add_smart_list"/>    
-    <item
-        android:id="@id/menu_sync"
-        android:icon="@drawable/ic_menu_refresh"
-        android:showAsAction="ifRoom"
-        android:actionProviderClass="dev.drsoran.moloko.actionproviders.SyncActionProvider"
-        android:title="@string/phr_do_sync"/>
+        android:title="@string/tasksearchresult_menu_add_smart_list"/>   
     <item
         android:id="@id/menu_toggle_default_list"
         android:showAsAction="never"

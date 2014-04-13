@@ -52,7 +52,8 @@ public class SystemServicesContainer implements ISystemServices
    {
       this.log = new AndroidLogger( context );
       
-      final IConnectionFactory rtmConnectionFactory = new DefaultConnectionFactory( new DefaultReaderFactory( log ),
+      final IConnectionFactory rtmConnectionFactory = new DefaultConnectionFactory( new DefaultReaderFactory( context,
+                                                                                                              log ),
                                                                                     log );
       this.connectionService = new ConnectionService( context,
                                                       rtmConnectionFactory );

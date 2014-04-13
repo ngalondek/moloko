@@ -24,7 +24,6 @@ package dev.drsoran.moloko.app.taskslist;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 import android.app.ActionBar;
 import android.app.ActionBar.OnNavigationListener;
@@ -34,13 +33,11 @@ import android.content.Intent;
 import android.content.Loader;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Parcel;
-import android.os.Parcelable;
 import android.text.TextUtils;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.app.Intents;
 import dev.drsoran.moloko.app.baseactivities.MolokoActivity;
-import dev.drsoran.moloko.app.home.NavigationHandlerBase;
+import dev.drsoran.moloko.app.home.NavigationDrawerHandlerBase;
 import dev.drsoran.moloko.app.loaders.TasksListLoader;
 import dev.drsoran.moloko.app.loaders.TasksListsLoader;
 import dev.drsoran.moloko.app.taskslist.TasksListNavigationAdapter.IItem;
@@ -53,26 +50,26 @@ import dev.drsoran.moloko.state.InstanceState;
 import dev.drsoran.rtm.parsing.grammar.rtmsmart.RtmSmartFilterBuilder;
 
 
-public class TasksListNavigationHandler extends NavigationHandlerBase implements
-         OnNavigationListener, LoaderCallbacks< TasksList >
+public class TasksListNavigationDrawerHandler extends
+         NavigationDrawerHandlerBase implements OnNavigationListener,
+         LoaderCallbacks< TasksList >
 {
-   @InstanceState( key = "sel_nav_item",
-                   defaultValue = InstanceState.NO_DEFAULT )
-   private SelectedNavigationItem selectedNavigationItem;
-   
    @InstanceState( key = Intents.Extras.KEY_LIST,
                    defaultValue = InstanceState.NULL )
    private TasksList tasksList;
    
    private TasksListNavigationAdapter actionBarNavigationAdapter;
    
+   private int selectedItemPosition;
    
    
-   public TasksListNavigationHandler( MolokoActivity activity, int fragmentId )
+   
+   public TasksListNavigationDrawerHandler( MolokoActivity activity,
+      int fragmentId )
    {
       super( activity, fragmentId );
       registerAnnotatedConfiguredInstance( this,
-                                           TasksListNavigationHandler.class );
+                                           TasksListNavigationDrawerHandler.class );
    }
    
    
@@ -91,10 +88,29 @@ public class TasksListNavigationHandler extends NavigationHandlerBase implements
    
    
    @Override
-   public void setActivityTitle()
+   public void onNavigationDrawerOpened()
+   {
+      setStandardNavigationMode();
+      disableFragmentOptionsMenu();
+   }
+   
+   
+   
+   @Override
+   public void onNavigationDrawerClosed()
    {
       setTitle();
       setSubTitle();
+      restoreFragmentOptionsMenu();
+      
+      if ( tasksList != null )
+      {
+         setListNavigationMode();
+      }
+      else
+      {
+         setStandardNavigationMode();
+      }
    }
    
    
@@ -249,29 +265,11 @@ public class TasksListNavigationHandler extends NavigationHandlerBase implements
    
    
    
-   public long getActiveListId()
-   {
-      if ( isListNavigationMode() )
-      {
-         return selectedNavigationItem.id;
-      }
-      
-      return getListIdFromIntent();
-   }
-   
-   
-   
    private void setStandardNavigationMode()
    {
       final ActionBar actionBar = getActivity().getActionBar();
+      
       actionBar.setDisplayShowTitleEnabled( true );
-      
-      if ( isListNavigationMode() )
-      {
-         selectedNavigationItem = null;
-         actionBarNavigationAdapter = null;
-      }
-      
       actionBar.setNavigationMode( ActionBar.NAVIGATION_MODE_STANDARD );
       actionBar.setListNavigationCallbacks( null, null );
    }
@@ -280,41 +278,30 @@ public class TasksListNavigationHandler extends NavigationHandlerBase implements
    
    private void setListNavigationMode()
    {
-      initializeListNavigation();
+      if ( actionBarNavigationAdapter == null )
+      {
+         initializeListNavigation();
+      }
       
       final ActionBar actionBar = getActivity().getActionBar();
       
       actionBar.setDisplayShowTitleEnabled( false );
       actionBar.setNavigationMode( ActionBar.NAVIGATION_MODE_LIST );
-      actionBar.setSelectedNavigationItem( selectedNavigationItem.position );
+      actionBar.setListNavigationCallbacks( actionBarNavigationAdapter, this );
+      actionBar.setSelectedNavigationItem( selectedItemPosition );
    }
    
    
    
    private void initializeListNavigation()
    {
-      final boolean isFirstInitialization = selectedNavigationItem == null;
-      if ( isFirstInitialization )
-      {
-         selectedNavigationItem = new SelectedNavigationItem();
-         setSelectedNavigationItemIdFromIntent();
-         setSelectedNavigationItemPositionFromSubTitle();
-      }
-      
+      selectedItemPosition = getSelectedNavigationItemPositionFromSubTitle();
       setNavigationAdapter();
    }
    
    
    
-   private void setSelectedNavigationItemIdFromIntent()
-   {
-      final long listIdFromIntent = getListIdFromIntent();
-      selectedNavigationItem.id = listIdFromIntent;
-   }
-   
-   
-   
-   private void setSelectedNavigationItemPositionFromSubTitle()
+   private int getSelectedNavigationItemPositionFromSubTitle()
    {
       final String subTitle = getSubTitleFromIntentExtras();
       
@@ -322,28 +309,33 @@ public class TasksListNavigationHandler extends NavigationHandlerBase implements
       {
          if ( getCompletedSubtitle().equals( subTitle ) )
          {
-            selectedNavigationItem.position = TasksListNavigationAdapter.ITEM_POSITION_COMPLETED_TASKS;
+            return TasksListNavigationAdapter.ITEM_POSITION_COMPLETED_TASKS;
          }
-         else if ( getOverdueSubtitle().equals( subTitle ) )
+         
+         if ( getOverdueSubtitle().equals( subTitle ) )
          {
-            selectedNavigationItem.position = TasksListNavigationAdapter.ITEM_POSITION_OVERDUE_TASKS;
+            return TasksListNavigationAdapter.ITEM_POSITION_OVERDUE_TASKS;
          }
-         else if ( getDueTodaySubtitle().equals( subTitle ) )
+         
+         if ( getDueTodaySubtitle().equals( subTitle ) )
          {
-            selectedNavigationItem.position = TasksListNavigationAdapter.ITEM_POSITION_TODAY_TASKS;
+            return TasksListNavigationAdapter.ITEM_POSITION_TODAY_TASKS;
          }
-         else if ( getDueTomorrowSubtitle().equals( subTitle ) )
+         
+         if ( getDueTomorrowSubtitle().equals( subTitle ) )
          {
-            selectedNavigationItem.position = TasksListNavigationAdapter.ITEM_POSITION_TOMORROW_TASKS;
+            return TasksListNavigationAdapter.ITEM_POSITION_TOMORROW_TASKS;
          }
       }
+      
+      return 0;
    }
    
    
    
    private String getSubTitleFromSelectedNavigationItemPosition()
    {
-      switch ( selectedNavigationItem.position )
+      switch ( getSelectedNavigationItemPosition() )
       {
          case TasksListNavigationAdapter.ITEM_POSITION_COMPLETED_TASKS:
             return getCompletedSubtitle();
@@ -364,9 +356,9 @@ public class TasksListNavigationHandler extends NavigationHandlerBase implements
    
    
    
-   private boolean isListNavigationMode()
+   private int getSelectedNavigationItemPosition()
    {
-      return getActivity().getActionBar().getNavigationMode() == ActionBar.NAVIGATION_MODE_LIST;
+      return getActivity().getActionBar().getSelectedNavigationIndex();
    }
    
    
@@ -425,9 +417,6 @@ public class TasksListNavigationHandler extends NavigationHandlerBase implements
    private void setNavigationAdapter()
    {
       createActionBarNavigationAdapter();
-      getActivity().getActionBar()
-                   .setListNavigationCallbacks( actionBarNavigationAdapter,
-                                                this );
    }
    
    
@@ -448,9 +437,11 @@ public class TasksListNavigationHandler extends NavigationHandlerBase implements
       
       final ExtendedTaskCount extendedListInfo = tasksList.getTasksCount();
       
-      Bundle config = Intents.Extras.createOpenListExtras( tasksList.getId() );
-      actionBarNavigationItems.add( TasksListNavigationAdapter.ITEM_POSITION_DEFAULT_TASKS,
-                                    new TasksListNavigationAdapter.RtmListItem( tasksList ) );
+      Bundle config = Intents.Extras.createOpenListExtras( tasksList, null );
+      actionBarNavigationItems.add( TasksListNavigationAdapter.ITEM_POSITION_INCOMPLETE_TASKS,
+                                    new TasksListNavigationAdapter.ExtendedRtmListItem( getIncompleteSubtitle(),
+                                                                                        tasksList,
+                                                                                        extendedListInfo.getIncompleteTaskCount() ).setTasksListConfig( config ) );
       
       config = Intents.Extras.createOpenListExtras( tasksList,
                                                     new RtmSmartFilterBuilder().statusCompleted()
@@ -488,6 +479,13 @@ public class TasksListNavigationHandler extends NavigationHandlerBase implements
                                                                                         extendedListInfo.getDueTomorrowTaskCount() ).setTasksListConfig( config ) );
       
       return actionBarNavigationItems;
+   }
+   
+   
+   
+   private String getIncompleteSubtitle()
+   {
+      return getActivity().getString( R.string.taskslist_actionbar_subtitle_incomplete );
    }
    
    
@@ -531,21 +529,21 @@ public class TasksListNavigationHandler extends NavigationHandlerBase implements
    @Override
    public boolean onNavigationItemSelected( int itemPosition, long itemId )
    {
-      final boolean hasChangedSelectedItemId = itemId != selectedNavigationItem.id;
-      final boolean handled = hasChangedSelectedItemId
-         || itemPosition != selectedNavigationItem.position;
-      
-      if ( handled )
+      if ( itemPosition != selectedItemPosition )
       {
+         final IItem selectedItem = actionBarNavigationAdapter.getItem( itemPosition );
+         
          final Intent intent = Intents.createOpenListIntent( tasksList, null );
-         intent.getExtras()
-               .putString( Intents.Extras.KEY_ACTIVITY_SUB_TITLE,
-                           getSubTitleFromSelectedNavigationItemPosition() );
+         intent.putExtras( selectedItem.getTasksListConfig() );
+         intent.putExtra( Intents.Extras.KEY_ACTIVITY_SUB_TITLE,
+                          getSubTitleFromSelectedNavigationItemPosition() );
          
          getActivity().startActivity( intent );
+         
+         return true;
       }
       
-      return handled;
+      return false;
    }
    
    
@@ -554,110 +552,5 @@ public class TasksListNavigationHandler extends NavigationHandlerBase implements
    {
       extras.putLong( Intents.Extras.KEY_LIST_ID, getListIdFromIntent() );
       return TasksListFragment.newInstance( extras );
-   }
-   
-   
-   private final static class SelectedNavigationItem implements Parcelable
-   {
-      @SuppressWarnings( "unused" )
-      public static final Parcelable.Creator< SelectedNavigationItem > CREATOR = new Parcelable.Creator< SelectedNavigationItem >()
-      {
-         
-         @Override
-         public SelectedNavigationItem createFromParcel( Parcel source )
-         {
-            return new SelectedNavigationItem( source );
-         }
-         
-         
-         
-         @Override
-         public SelectedNavigationItem[] newArray( int size )
-         {
-            return new SelectedNavigationItem[ size ];
-         }
-         
-      };
-      
-      public long id = Constants.NO_ID;
-      
-      public int position;
-      
-      
-      
-      public SelectedNavigationItem()
-      {
-      }
-      
-      
-      
-      public SelectedNavigationItem( long id, int position )
-      {
-         this.id = id;
-         this.position = position;
-      }
-      
-      
-      
-      public SelectedNavigationItem( Parcel source )
-      {
-         this( source.readLong(), source.readInt() );
-      }
-      
-      
-      
-      @Override
-      public void writeToParcel( Parcel dest, int flags )
-      {
-         dest.writeLong( id );
-         dest.writeInt( position );
-      }
-      
-      
-      
-      @Override
-      public int describeContents()
-      {
-         return 0;
-      }
-      
-      
-      
-      @Override
-      public boolean equals( Object o )
-      {
-         if ( o == null )
-         {
-            return false;
-         }
-         
-         if ( o == this )
-         {
-            return true;
-         }
-         
-         if ( o.getClass() != getClass() )
-         {
-            return false;
-         }
-         
-         final SelectedNavigationItem other = (SelectedNavigationItem) o;
-         return id == other.id && position == other.position;
-      }
-      
-      
-      
-      @Override
-      public String toString()
-      {
-         return format( id, position );
-      }
-      
-      
-      
-      public static String format( long id, int position )
-      {
-         return String.format( Locale.ENGLISH, "%d;%d", id, position );
-      }
    }
 }

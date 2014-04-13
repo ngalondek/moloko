@@ -59,6 +59,10 @@ public interface IRtmSyncPartner
    
    
    
+   RtmTask getTask( String taskId );
+   
+   
+   
    List< IModification > getModificationsOfTask( RtmTask task );
    
    

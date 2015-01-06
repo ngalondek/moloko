@@ -477,7 +477,10 @@ public class TimeParser extends AbstractTimeParser
             // AM
             {
                match( input, AM, FOLLOW_AM_in_am_pm300 );
-               
+               if (cal.get(Calendar.HOUR_OF_DAY) >= 12)
+               {
+                  cal.add( Calendar.HOUR_OF_DAY, -12 );
+               }
             }
                break;
             case 2:
@@ -485,8 +488,10 @@ public class TimeParser extends AbstractTimeParser
             // PM
             {
                match( input, PM, FOLLOW_PM_in_am_pm307 );
-               
-               cal.add( Calendar.HOUR_OF_DAY, 12 );
+               if (cal.get(Calendar.HOUR_OF_DAY) < 12)
+               {
+                  cal.add( Calendar.HOUR_OF_DAY, 12 );
+               }
                
             }
                break;

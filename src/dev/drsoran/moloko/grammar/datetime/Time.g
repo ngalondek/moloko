@@ -124,9 +124,18 @@ time_point_in_time [MolokoCalendar cal]
 
 am_pm [MolokoCalendar cal]
    : AM
+   {
+      if (cal.get(Calendar.HOUR_OF_DAY) >= 12)
+      {
+         cal.add( Calendar.HOUR_OF_DAY, -12 );
+      }
+   }
    | PM
    {
-      cal.add( Calendar.HOUR_OF_DAY, 12 );
+      if (cal.get(Calendar.HOUR_OF_DAY) < 12)
+      {
+         cal.add( Calendar.HOUR_OF_DAY, 12 );
+      }
    }
    ;
    catch[ RecognitionException e ]

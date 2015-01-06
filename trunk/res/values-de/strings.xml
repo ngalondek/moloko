@@ -54,7 +54,7 @@
    <string name="g_no_account">Keine RTM Zugangsdaten vorhanden</string>
    <string name="moloko_about_text">Über Moloko</string>
    <string name="moloko_about_info" formatted="false">
-      &lt;a href="http://code.google.com/p/moloko/">Moloko&lt;/a> ist ein Remember The Milk client entwickelt von &lt;a href="mailto:moloko@gmail.com">Ronny Röhricht&lt;/a>.
+      &lt;a href="http://code.google.com/p/moloko/">Moloko&lt;/a> ist ein Remember The Milk client entwickelt von &lt;a href="mailto:ronny.roehricht@gmail.com">Ronny Röhricht&lt;/a>.
       &lt;br>&lt;br>Version: %1$s&lt;br>&lt;br>
       Besonderen Dank an David Vermeille.&lt;br>&lt;br>
       Moloko ist implementiert mit Hilfe von:&lt;br>

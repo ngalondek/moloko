@@ -61,7 +61,7 @@ import dev.drsoran.rtm.RtmSettings;
  */
 public class ServiceImpl implements Service
 {
-   public final static String SERVER_HOST_NAME = "www.rememberthemilk.com";
+   public final static String SERVER_HOST_NAME = "api.rememberthemilk.com";
    
    public final static int SERVER_PORT_NUMBER_HTTP = 80;
    
